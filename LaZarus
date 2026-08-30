@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b0f17" />
+  <meta name="description" content="LaZarus — an open-source AI security research lab." />
+  <title>LaZarus // Researching</title>
+  <style>
+    :root{
+      --ink:#090b11;
+      --night:#0b0f17;
+      --panel:#101621;
+      --panel-2:#151a28;
+      --line:rgba(191,205,255,.14);
+      --text:#eef3ff;
+      --muted:#9ea8bd;
+      --cyan:#54e9ff;
+      --blue:#7ca7ff;
+      --violet:#7d59ff;
+      --purple:#6b2cff;
+      --magenta:#ff4ca8;
+      --pink:#ff6dcc;
+      --acid:#c3ff61;
+      --shadow:0 30px 90px rgba(0,0,0,.42);
+      --radius:28px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 80% 10%, rgba(125,89,255,.18), transparent 28%),
+        radial-gradient(circle at 15% 18%, rgba(84,233,255,.10), transparent 23%),
+        linear-gradient(180deg,#0a0e15 0%,#0d1220 46%,#0a0d14 100%);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    button,a{ -webkit-tap-highlight-color:transparent }
+    ::selection{background:rgba(125,89,255,.42);color:#fff}
+
+    body:before{
+      content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;z-index:20;
+      background-image:
+        repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0,rgba(255,255,255,.018) 1px,transparent 1px,transparent 3px),
+        repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 4px);
+      mix-blend-mode:soft-light;
+    }
+    .noise{position:fixed;inset:-20%;pointer-events:none;z-index:19;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");}
+
+    .site-header{
+      position:fixed;top:0;left:0;right:0;z-index:30;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 28px;
+      background:linear-gradient(180deg,rgba(8,11,17,.88),rgba(8,11,17,.18));
+      backdrop-filter:blur(12px);
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.04em}
+    .brand svg{width:150px;height:38px;display:block}
+    .nav{display:flex;gap:24px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#c8d1e5}
+    .nav a{opacity:.78;transition:.2s}
+    .nav a:hover{opacity:1;color:#fff}
+
+    main{position:relative;z-index:2}
+    .section{width:min(1180px,calc(100% - 36px));margin:0 auto}
+
+    .hero{
+      min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:34px;
+      padding-top:110px;padding-bottom:70px;position:relative;isolation:isolate;
+    }
+    .hero:before{
+      content:"";position:absolute;inset:12% -7% 8% 28%;z-index:-2;
+      background:
+        radial-gradient(circle at 60% 45%,rgba(89,46,236,.55),transparent 36%),
+        radial-gradient(circle at 30% 45%,rgba(33,193,255,.24),transparent 30%),
+        radial-gradient(circle at 68% 70%,rgba(255,76,168,.20),transparent 24%);
+      filter:blur(28px);opacity:.92;
+    }
+    .hero-copy{position:relative;z-index:4;max-width:720px}
+    .status{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid rgba(175,195,255,.18);background:rgba(13,17,27,.68);backdrop-filter:blur(12px);font-size:.72rem;letter-spacing:.16em;font-weight:800;color:#dae2f4}
+    .status i{display:block;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);animation:pulse 1.8s ease-in-out infinite}
+    @keyframes pulse{50%{transform:scale(.72);opacity:.55}}
+    h1{
+      margin:24px 0 18px;font-size:clamp(3.3rem,7.1vw,7.5rem);line-height:.86;letter-spacing:-.065em;font-weight:900;
+      max-width:800px;text-transform:uppercase;
+      text-shadow:0 16px 55px rgba(0,0,0,.34);
+    }
+    h1 .accent{color:var(--magenta);text-shadow:0 0 24px rgba(255,76,168,.17)}
+    .lede{max-width:680px;color:#b7c1d7;font-size:1.05rem;line-height:1.75}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+    .btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 18px;border:1px solid rgba(255,255,255,.14);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:.74rem;transition:.2s;position:relative;overflow:hidden}
+    .btn.primary{background:linear-gradient(135deg,#fff 0%,#d9dcff 100%);color:#090c12}
+    .btn.primary:after{content:"";position:absolute;inset:-50% -20%;background:linear-gradient(110deg,transparent 42%,rgba(84,233,255,.45) 50%,transparent 58%);transform:translateX(-80%);transition:.5s}
+    .btn.primary:hover:after{transform:translateX(80%)}
+    .btn.ghost{background:rgba(15,18,29,.66);color:#eef3ff}
+    .btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.28)}
+    .meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;color:#8c97ad;font-size:.68rem;letter-spacing:.18em;font-weight:800}
+    .meta span{padding:6px 9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+
+    .hero-art{min-height:620px;position:relative;transform:translateY(-16px)}
+    .orb{position:absolute;border-radius:50%;filter:blur(2px)}
+    .orb.a{width:440px;height:440px;right:2%;top:9%;background:radial-gradient(circle at 55% 45%,rgba(102,82,255,.8),rgba(48,31,152,.52) 32%,rgba(24,20,61,0) 68%);}
+    .orb.b{width:360px;height:360px;right:24%;top:36%;background:radial-gradient(circle at 48% 48%,rgba(69,226,255,.78),rgba(32,113,181,.28) 26%,transparent 67%);mix-blend-mode:screen}
+    .orb.c{width:280px;height:280px;right:-5%;bottom:7%;background:radial-gradient(circle,rgba(255,66,168,.48),transparent 68%);}
+
+    .splash{position:absolute;filter:drop-shadow(0 22px 50px rgba(0,0,0,.45));mix-blend-mode:screen}
+    .splash.one{right:0;top:9%;width:500px;height:270px;background:linear-gradient(125deg,transparent 8%,rgba(116,75,255,.9) 9% 20%,transparent 21%),linear-gradient(130deg,transparent 28%,rgba(74,220,255,.78) 29% 32%,transparent 33%),linear-gradient(65deg,transparent 44%,rgba(255,76,168,.72) 45% 48%,transparent 49%);clip-path:polygon(0 55%,12% 36%,22% 47%,31% 18%,40% 50%,55% 10%,67% 38%,76% 12%,100% 25%,87% 49%,100% 70%,75% 63%,61% 88%,45% 64%,33% 91%,18% 65%,4% 77%)}
+    .splash.two{right:17%;bottom:6%;width:410px;height:220px;background:radial-gradient(ellipse at 35% 50%,rgba(72,238,255,.62),transparent 29%),radial-gradient(ellipse at 67% 50%,rgba(154,87,255,.66),transparent 30%),linear-gradient(115deg,transparent 28%,rgba(255,80,171,.45) 29% 35%,transparent 36%);filter:blur(.4px)}
+    .brush{position:absolute;height:28px;transform:rotate(-10deg);opacity:.75;mix-blend-mode:screen;background:linear-gradient(90deg,transparent 0%,rgba(90,231,255,.15) 6%,rgba(90,231,255,.7) 26%,rgba(119,88,255,.75) 54%,rgba(255,83,176,.3) 78%,transparent 100%);filter:blur(1px);clip-path:polygon(0 35%,13% 15%,38% 24%,56% 8%,76% 21%,100% 45%,83% 72%,61% 59%,37% 77%,16% 60%,0 82%)}
+    .brush.b1{right:5%;top:54%;width:470px}
+    .brush.b2{right:22%;top:72%;width:330px;transform:rotate(12deg);opacity:.52}
+
+    .panel-art{position:absolute;right:7%;top:22%;width:420px;height:470px;border:1px solid rgba(221,231,255,.11);background:linear-gradient(160deg,rgba(16,22,37,.58),rgba(8,11,20,.26));box-shadow:var(--shadow);backdrop-filter:blur(6px);overflow:hidden;clip-path:polygon(3% 1%,97% 0,100% 97%,78% 100%,53% 95%,22% 99%,0 88%,2% 20%)}
+    .panel-art:before{content:"";position:absolute;inset:0;background:linear-gradient(165deg,transparent 33%,rgba(84,233,255,.05) 34% 43%,transparent 44%),linear-gradient(20deg,transparent 44%,rgba(126,89,255,.11) 45% 52%,transparent 53%)}
+    .hood{position:absolute;left:80px;top:48px;width:265px;height:280px;background:linear-gradient(155deg,#dde7ff 0%,#7481ad 25%,#1d2743 44%,#0d1422 75%);clip-path:polygon(33% 0,53% 8%,64% 17%,79% 18%,100% 37%,84% 59%,75% 82%,51% 100%,29% 84%,20% 68%,0 55%,14% 33%);filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
+    .hood:before{content:"";position:absolute;inset:38px 46px 100px;background:linear-gradient(135deg,#0d1420 0 45%,#121c32 46%);clip-path:polygon(8% 0,88% 16%,100% 92%,31% 100%,0 55%)}
+    .hood:after{content:"";position:absolute;left:94px;top:110px;width:74px;height:38px;background:linear-gradient(90deg,transparent,#53e8ff 25% 55%,#7d59ff 76%,transparent);filter:blur(7px);opacity:.9;transform:skewX(-24deg)}
+    .cloak{position:absolute;left:45px;bottom:-18px;width:345px;height:235px;background:linear-gradient(135deg,#283148 0%,#131c2f 36%,#090d16 75%);clip-path:polygon(10% 0,83% 13%,100% 58%,82% 89%,44% 75%,16% 100%,0 44%);opacity:.96}
+    .weapon{position:absolute;right:15px;bottom:44px;width:280px;height:26px;background:linear-gradient(180deg,#a7b5d5,#2b3347 40%,#0c121c 75%);transform:rotate(12deg);box-shadow:0 8px 25px rgba(0,0,0,.55)}
+    .weapon:before{content:"";position:absolute;left:-16px;top:-6px;width:46px;height:40px;border:4px solid #232b3b;border-bottom-width:8px;transform:skewX(-12deg)}
+    .weapon:after{content:"";position:absolute;left:80px;top:4px;width:120px;height:4px;background:linear-gradient(90deg,rgba(84,233,255,.2),var(--cyan),transparent);filter:blur(1px)}
+    .micro{position:absolute;padding:6px 9px;font:700 .62rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.15em;color:#b8c4da;background:rgba(8,11,16,.75);border:1px solid rgba(255,255,255,.08);text-transform:uppercase}
+    .micro.one{left:20px;top:28px}.micro.two{right:16px;top:112px;color:var(--cyan)}.micro.three{left:18px;bottom:22px;color:var(--pink)}
+    .scribble{position:absolute;left:22px;bottom:70px;font-size:1rem;line-height:1.1;font-weight:900;text-transform:uppercase;transform:rotate(-7deg);color:#e9eeff;text-shadow:2px 2px 0 #7d59ff,-1px -1px 0 #54e9ff}
+    .tag{position:absolute;right:20px;bottom:16px;font-size:2.8rem;font-weight:900;letter-spacing:-.09em;transform:rotate(-7deg);color:#bdaeff;text-shadow:2px 2px 0 #ff4ca8,-3px -2px 0 #54e9ff;opacity:.72}
+
+    .section-block{padding:110px 0}
+    .eyebrow{font-size:.7rem;letter-spacing:.18em;font-weight:900;color:#8f9bb0;text-transform:uppercase}
+    .split{display:grid;grid-template-columns:1fr 1.35fr;gap:56px;align-items:start}
+    .split h2{margin:14px 0 0;font-size:clamp(2.2rem,5vw,5.2rem);line-height:.9;letter-spacing:-.05em;text-transform:uppercase}
+    .split h2 em{font-style:normal;color:var(--cyan)}
+    .copy{color:#b3bed0;font-size:1.03rem;line-height:1.8;max-width:730px}
+    .quote{margin-top:28px;padding-left:18px;border-left:3px solid var(--magenta);font-size:1.05rem;line-height:1.6;color:#dbe3f2}
+
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:36px}
+    .card{min-height:340px;padding:22px;position:relative;overflow:hidden;border:1px solid rgba(210,225,255,.09);background:linear-gradient(150deg,rgba(22,28,43,.92),rgba(10,14,22,.92));box-shadow:var(--shadow)}
+    .card:before{content:"";position:absolute;inset:-30% -10%;background:radial-gradient(circle at 65% 35%,rgba(84,233,255,.18),transparent 28%),radial-gradient(circle at 35% 76%,rgba(125,89,255,.2),transparent 27%);transform:rotate(-7deg)}
+    .card.accent:before{background:radial-gradient(circle at 70% 32%,rgba(255,76,168,.24),transparent 26%),radial-gradient(circle at 25% 70%,rgba(125,89,255,.18),transparent 28%)}
+    .card .num{position:absolute;right:15px;top:13px;font:800 .7rem ui-monospace,monospace;letter-spacing:.14em;color:#8190a8}
+    .card h3{position:relative;margin:98px 0 12px;font-size:1.55rem;line-height:1;text-transform:uppercase;letter-spacing:-.035em}
+    .card p{position:relative;margin:0;color:#aab4c7;line-height:1.65;font-size:.94rem;max-width:32ch}
+    .card .label{position:absolute;left:20px;bottom:18px;font:900 .64rem ui-monospace,monospace;letter-spacing:.18em;color:var(--cyan)}
+    .card.accent .label{color:var(--pink)}
+
+    .project{position:relative;margin-top:38px;border:1px solid rgba(224,234,255,.1);background:linear-gradient(155deg,rgba(18,24,38,.96),rgba(8,11,17,.96));min-height:330px;overflow:hidden;box-shadow:var(--shadow)}
+    .project:before{content:"";position:absolute;inset:0;background:linear-gradient(128deg,transparent 40%,rgba(84,233,255,.06) 41% 44%,transparent 45%),linear-gradient(18deg,transparent 22%,rgba(255,76,168,.06) 23% 31%,transparent 32%)}
+    .project-inner{position:relative;padding:34px;display:grid;grid-template-columns:1.25fr .75fr;gap:32px;align-items:end;min-height:330px}
+    .stamp{display:inline-block;padding:7px 10px;border:1px solid rgba(255,76,168,.36);color:var(--pink);font:900 .62rem ui-monospace,monospace;letter-spacing:.16em;transform:rotate(-3deg);background:rgba(255,76,168,.05)}
+    .project h2{margin:20px 0 8px;font-size:clamp(2.6rem,5vw,5.2rem);letter-spacing:-.06em;line-height:.88;text-transform:uppercase}
+    .project h2 span{color:var(--cyan)}
+    .project p{color:#aeb8ca;max-width:54ch;line-height:1.75}
+    .specs{justify-self:end;width:min(310px,100%);border-left:1px solid rgba(255,255,255,.1);padding-left:20px}
+    .spec{display:flex;justify-content:space-between;gap:20px;padding:11px 0;border-bottom:1px dashed rgba(255,255,255,.09);font-size:.74rem;text-transform:uppercase;letter-spacing:.12em}
+    .spec b{color:#e4eaff}.spec span{color:#7d8ba4;text-align:right}
+
+    .founder{display:grid;grid-template-columns:.8fr 1.2fr;gap:30px;align-items:stretch}
+    .founder-art,.founder-copy{border:1px solid rgba(210,225,255,.1);background:linear-gradient(145deg,rgba(19,24,39,.9),rgba(9,12,19,.95));min-height:430px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .founder-art:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 52% 45%,rgba(100,74,255,.34),transparent 35%),radial-gradient(circle at 25% 76%,rgba(84,233,255,.2),transparent 25%),radial-gradient(circle at 85% 20%,rgba(255,76,168,.16),transparent 25%)}
+    .founder-art:after{content:"ROGUE";position:absolute;inset:17% auto auto 8%;font-size:5rem;font-weight:900;letter-spacing:-.09em;color:rgba(255,255,255,.06);transform:rotate(-9deg);white-space:nowrap}
+    .founder-glyph{position:absolute;left:15%;top:18%;width:68%;height:58%;clip-path:polygon(29% 0,49% 5%,68% 21%,86% 28%,100% 54%,82% 70%,68% 95%,40% 100%,28% 87%,6% 78%,0 52%,11% 31%);background:linear-gradient(155deg,#9dc1ff 0%,#55599b 28%,#1a2340 47%,#080b13 78%);filter:drop-shadow(0 20px 40px rgba(0,0,0,.55))}
+    .founder-glyph:before{content:"";position:absolute;left:34%;top:36%;width:32%;height:13%;background:linear-gradient(90deg,transparent,#54e9ff 24%,#7d59ff 62%,#ff4ca8 88%,transparent);filter:blur(8px);transform:skewX(-18deg)}
+    .founder-glyph:after{content:"";position:absolute;left:27%;top:14%;width:46%;height:63%;border:1px solid rgba(210,230,255,.14);clip-path:polygon(30% 0,76% 11%,100% 52%,76% 100%,18% 90%,0 42%)}
+    .founder-copy{padding:36px;display:flex;flex-direction:column;justify-content:end}
+    .founder-copy .mini{font:900 .64rem ui-monospace,monospace;letter-spacing:.17em;color:#8290aa}
+    .founder-copy h2{margin:14px 0 12px;font-size:clamp(2.3rem,5vw,5rem);line-height:.9;letter-spacing:-.06em;text-transform:none}
+    .founder-copy h2 .rogue{color:var(--magenta);text-shadow:0 0 30px rgba(255,76,168,.16)}
+    .founder-copy p{color:#aeb8c9;line-height:1.8;max-width:50ch}
+    .signature{margin-top:22px;font:900 .76rem ui-monospace,monospace;letter-spacing:.14em;color:#9aa7bd}
+
+    .connect{padding:100px 0 130px}
+    .connect-box{border:1px solid rgba(223,233,255,.1);padding:42px;background:linear-gradient(135deg,rgba(16,22,36,.96),rgba(10,13,20,.98));display:flex;justify-content:space-between;gap:34px;align-items:end;position:relative;overflow:hidden}
+    .connect-box:before{content:"";position:absolute;inset:-30%;background:linear-gradient(110deg,transparent 36%,rgba(84,233,255,.05) 37% 46%,transparent 47%),linear-gradient(70deg,transparent 48%,rgba(125,89,255,.08) 49% 61%,transparent 62%);transform:rotate(-6deg)}
+    .connect-box>*{position:relative}
+    .connect-box h2{margin:10px 0;font-size:clamp(2.6rem,6vw,5.7rem);line-height:.88;letter-spacing:-.06em;text-transform:uppercase}
+    .connect-box h2 span{color:var(--magenta)}
+    .connect-box p{color:#aeb8ca;max-width:58ch;line-height:1.75}
+    .footer{padding:0 0 28px;display:flex;justify-content:space-between;gap:16px;align-items:center;color:#7e8ca2;font:700 .66rem ui-monospace,monospace;letter-spacing:.13em;text-transform:uppercase}
+    .footer .links{display:flex;gap:18px}.footer a:hover{color:#fff}
+
+    .spray-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px rgba(255,76,168,.9)}
+    .d1{right:18%;top:17%}.d2{right:13%;top:29%;width:3px;height:3px}.d3{right:25%;top:12%;width:4px;height:4px;background:var(--cyan)}.d4{right:34%;bottom:22%;width:3px;height:3px;background:var(--violet)}
+
+    @media (max-width: 960px){
+      .nav{display:none}
+      .hero{grid-template-columns:1fr;padding-top:120px}
+      .hero-art{min-height:520px;margin-top:-10px}
+      .panel-art{right:10%;width:360px;height:410px}
+      .hood{left:69px;top:43px;transform:scale(.88);transform-origin:top left}.cloak{left:40px;bottom:-20px;transform:scale(.9);transform-origin:bottom left}.weapon{right:-20px;transform:scale(.9);transform-origin:right center}
+      .split{grid-template-columns:1fr;gap:22px}
+      .cards{grid-template-columns:1fr}
+      .project-inner{grid-template-columns:1fr}.specs{justify-self:start;width:100%;max-width:420px}
+      .founder{grid-template-columns:1fr}
+      .connect-box{flex-direction:column;align-items:flex-start}
+    }
+    @media (max-width: 600px){
+      .site-header{padding:14px 16px}.brand svg{width:126px}
+      .section{width:min(100% - 26px,1180px)}
+      h1{font-size:clamp(3.05rem,17vw,5.1rem)}
+      .hero{padding-bottom:25px}.hero-art{min-height:410px}.panel-art{right:0;top:17%;width:300px;height:340px}.hood{left:52px;top:35px;transform:scale(.68)}.cloak{left:30px;bottom:-26px;transform:scale(.68)}.weapon{right:-6px;bottom:45px;transform:scale(.68)}.micro.two{right:8px}.scribble{font-size:.8rem}.tag{font-size:2.2rem}
+      .section-block{padding:76px 0}
+      .card{min-height:300px}.card h3{margin-top:82px}
+      .project-inner{padding:24px}.project{min-height:0}.project h2{font-size:3.2rem}.connect{padding:78px 0 92px}.connect-box{padding:26px}.footer{padding-bottom:20px;flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="LaZarus home">
+      <svg viewBox="0 0 340 86" role="img" aria-label="LaZarus">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 63 L25 16 L82 16 L76 32 L43 32 L38 44 L68 44 L62 59 L35 59 L32 70" stroke="#54e9ff" stroke-width="5" opacity=".72"/>
+          <path d="M10 57 L23 10 L80 10 L74 26 L41 26 L36 38 L66 38 L60 53 L33 53 L30 64" stroke="#edf3ff" stroke-width="8"/>
+          <path d="M96 57 L112 13 L140 13 L145 31 L159 13 L184 13 L167 57 L150 57 L162 28 L150 44 L136 44 L133 28 L122 57 Z" fill="#edf3ff" stroke="#edf3ff" stroke-width="3"/>
+          <path d="M197 16 L190 56 L232 56" stroke="#edf3ff" stroke-width="9"/>
+          <path d="M238 56 L251 12 L289 12 L284 28 L265 28 L261 57" stroke="#ff4ca8" stroke-width="7"/>
+          <text x="122" y="78" fill="#7f8ba0" stroke="none" font-size="9" font-weight="800" font-family="ui-monospace,monospace" letter-spacing="3">OPEN / BUILD / BREAK / DEFEND</text>
+        </g>
+      </svg>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#focus">Focus</a>
+      <a href="#projects">Projects</a>
+      <a href="#founder">Founder</a>
+      <a href="#connect">Connect</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="section hero">
+      <div class="hero-copy">
+        <div class="status"><i></i> LAZARUS // RESEARCHING</div>
+        <h1>Figuring out how to <span class="accent">hack you</span>, just so you don't get hacked by someone else.</h1>
+        <p class="lede">LaZarus is a small open-source research lab exploring AI security, red teaming, and practical ways to use models to understand and defend other models.</p>
+        <div class="actions">
+          <a class="btn primary" href="#projects">Explore Projects ↘</a>
+          <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Join the Discord ↗</a>
+        </div>
+        <div class="meta"><span>OPEN SOURCE</span><span>AI SECURITY</span><span>RED TEAMING</span></div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
+        <div class="splash one"></div><div class="splash two"></div>
+        <div class="brush b1"></div><div class="brush b2"></div>
+        <div class="panel-art">
+          <div class="micro one">FIELD NOTE // 001</div>
+          <div class="micro two">AI / SEC</div>
+          <div class="micro three">NOT MAGIC // YET</div>
+          <div class="hood"></div><div class="cloak"></div><div class="weapon"></div>
+          <div class="scribble">break it.<br>learn it.<br>secure it.</div>
+          <div class="tag">LZRS</div>
+        </div>
+        <span class="spray-dot d1"></span><span class="spray-dot d2"></span><span class="spray-dot d3"></span><span class="spray-dot d4"></span>
+      </div>
+    </section>
+
+    <section class="section section-block" id="focus">
+      <div class="split">
+        <div>
+          <div class="eyebrow">01 / Why we exist</div>
+          <h2>We learn by <em>building.</em></h2>
+        </div>
+        <div>
+          <p class="copy">We're a bunch of rookies who want to get better at hacking by making things worth keeping. The goal is not to make noise — it's to turn curiosity into useful open-source security work and understand what the new AI era is actually capable of.</p>
+          <div class="quote">“Hunt the weakness. Understand the model. Give the community a better tool.”</div>
+        </div>
+      </div>
+
+      <div class="eyebrow" style="margin-top:72px">02 / Research areas</div>
+      <div class="cards">
+        <article class="card"><div class="num">/ 01</div><h3>AI-powered<br>security tooling</h3><p>Use models as force multipliers for reconnaissance, analysis, testing, and repeatable security work.</p><div class="label">// BUILD</div></article>
+        <article class="card accent"><div class="num">/ 02</div><h3>Red<br>teaming</h3><p>Probe systems, expose failure modes, and turn attack paths into knowledge the community can act on.</p><div class="label">// BREAK</div></article>
+        <article class="card"><div class="num">/ 03</div><h3>LLMs securing<br>other LLMs</h3><p>Explore model-to-model defense patterns for systems that need to reason about their own risks.</p><div class="label">// DEFEND</div></article>
+      </div>
+    </section>
+
+    <section class="section section-block" id="projects">
+      <div class="eyebrow">03 / Projects</div>
+      <div class="project">
+        <div class="project-inner">
+          <div>
+            <div class="stamp">NO RELEASES YET</div>
+            <h2>First experiment:<br><span>in progress.</span></h2>
+            <p>We don't have a flagship tool to fake. This section is ready for the first real release — with a GitHub link, project notes, research scope, and the people behind it.</p>
+            <a class="btn ghost" style="margin-top:18px" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">Open LaZarus on GitHub ↗</a>
+          </div>
+          <div class="specs">
+            <div class="spec"><b>STATUS</b><span>RESEARCHING</span></div>
+            <div class="spec"><b>MODEL</b><span>EXPERIMENTAL</span></div>
+            <div class="spec"><b>LICENSE</b><span>OPEN SOURCE</span></div>
+            <div class="spec"><b>RESEARCHERS</b><span>COMING SOON</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-block" id="founder">
+      <div class="eyebrow">04 / Founding signal</div>
+      <div class="founder" style="margin-top:22px">
+        <div class="founder-art"><div class="founder-glyph"></div></div>
+        <div class="founder-copy">
+          <div class="mini">FOUNDER / LAZARUS 001</div>
+          <h2>The<span class="rogue">Rogue</span>Prince</h2>
+          <p>Building the lab, chasing the weird stuff, and keeping the door open for researchers who want to turn experiments into useful tools.</p>
+          <div class="signature">THE ROGUE SIGNAL // LZRS</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section connect" id="connect">
+      <div class="connect-box">
+        <div>
+          <div class="eyebrow">05 / Join the wall</div>
+          <h2>Got an idea?<br><span>Tell us something weird.</span></h2>
+          <p>Share feedback, research leads, strange model behavior, or a security tool you think should exist. LaZarus is built in public.</p>
+        </div>
+        <div class="actions" style="margin-top:0">
+          <a class="btn primary" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="section footer">
+    <div>LAZARUS // RESEARCHING</div>
+    <div class="links"><a href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord</a></div>
+    <div>OPEN SOURCE / OPEN MINDS</div>
+  </footer>
+
+  <script>
+    // Small motion: slight parallax on the hero wall for a living-poster feel.
+    const art = document.querySelector('.hero-art');
+    window.addEventListener('pointermove', (e) => {
+      if (window.innerWidth < 900) return;
+      const x = (e.clientX / window.innerWidth - .5) * 10;
+      const y = (e.clientY / window.innerHeight - .5) * 8;
+      art.style.transform = `translate(${x}px, ${y - 16}px)`;
+    });
+  </script>
+</body>
+</html>
