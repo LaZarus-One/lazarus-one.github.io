@@ -23,7 +23,7 @@
       --pink:#ff6dcc;
       --acid:#c3ff61;
       --shadow:0 30px 90px rgba(0,0,0,.42);
-      --radius:28px;
+      --radius:16px;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -40,7 +40,6 @@
     a{color:inherit;text-decoration:none}
     button,a{ -webkit-tap-highlight-color:transparent }
     ::selection{background:rgba(125,89,255,.42);color:#fff}
-
     body:before{
       content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;z-index:20;
       background-image:
@@ -49,7 +48,6 @@
       mix-blend-mode:soft-light;
     }
     .noise{position:fixed;inset:-20%;pointer-events:none;z-index:19;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");}
-
     .site-header{
       position:fixed;top:0;left:0;right:0;z-index:30;
       display:flex;align-items:center;justify-content:space-between;
@@ -62,10 +60,8 @@
     .nav{display:flex;gap:24px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#c8d1e5}
     .nav a{opacity:.78;transition:.2s}
     .nav a:hover{opacity:1;color:#fff}
-
     main{position:relative;z-index:2}
     .section{width:min(1180px,calc(100% - 36px));margin:0 auto}
-
     .hero{
       min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:34px;
       padding-top:110px;padding-bottom:70px;position:relative;isolation:isolate;
@@ -79,7 +75,7 @@
       filter:blur(28px);opacity:.92;
     }
     .hero-copy{position:relative;z-index:4;max-width:720px}
-    .status{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid rgba(175,195,255,.18);background:rgba(13,17,27,.68);backdrop-filter:blur(12px);font-size:.72rem;letter-spacing:.16em;font-weight:800;color:#dae2f4}
+    .status{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid rgba(175,195,255,.18);background:rgba(13,17,27,.68);backdrop-filter:blur(12px);font-size:.72rem;letter-spacing:.16em;font-weight:800;color:#dae2f4;border-radius:20px;}
     .status i{display:block;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);animation:pulse 1.8s ease-in-out infinite}
     @keyframes pulse{50%{transform:scale(.72);opacity:.55}}
     h1{
@@ -90,41 +86,68 @@
     h1 .accent{color:var(--magenta);text-shadow:0 0 24px rgba(255,76,168,.17)}
     .lede{max-width:680px;color:#b7c1d7;font-size:1.05rem;line-height:1.75}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-    .btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 18px;border:1px solid rgba(255,255,255,.14);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:.74rem;transition:.2s;position:relative;overflow:hidden}
+    .btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border:1px solid rgba(255,255,255,.14);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:.74rem;transition:.2s;position:relative;overflow:hidden;border-radius:10px;}
     .btn.primary{background:linear-gradient(135deg,#fff 0%,#d9dcff 100%);color:#090c12}
     .btn.primary:after{content:"";position:absolute;inset:-50% -20%;background:linear-gradient(110deg,transparent 42%,rgba(84,233,255,.45) 50%,transparent 58%);transform:translateX(-80%);transition:.5s}
     .btn.primary:hover:after{transform:translateX(80%)}
     .btn.ghost{background:rgba(15,18,29,.66);color:#eef3ff}
     .btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.28)}
     .meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;color:#8c97ad;font-size:.68rem;letter-spacing:.18em;font-weight:800}
-    .meta span{padding:6px 9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
-
-    .hero-art{min-height:620px;position:relative;transform:translateY(-16px)}
+    .meta span{padding:6px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:6px;}
+    
+    /* ORIGINAL ASYMMETRIC / ANGULAR HERO ART PANEL */
+    .hero-art{min-height:640px;position:relative;transform:translateY(-16px)}
     .orb{position:absolute;border-radius:50%;filter:blur(2px)}
     .orb.a{width:440px;height:440px;right:2%;top:9%;background:radial-gradient(circle at 55% 45%,rgba(102,82,255,.8),rgba(48,31,152,.52) 32%,rgba(24,20,61,0) 68%);}
     .orb.b{width:360px;height:360px;right:24%;top:36%;background:radial-gradient(circle at 48% 48%,rgba(69,226,255,.78),rgba(32,113,181,.28) 26%,transparent 67%);mix-blend-mode:screen}
     .orb.c{width:280px;height:280px;right:-5%;bottom:7%;background:radial-gradient(circle,rgba(255,66,168,.48),transparent 68%);}
-
     .splash{position:absolute;filter:drop-shadow(0 22px 50px rgba(0,0,0,.45));mix-blend-mode:screen}
     .splash.one{right:0;top:9%;width:500px;height:270px;background:linear-gradient(125deg,transparent 8%,rgba(116,75,255,.9) 9% 20%,transparent 21%),linear-gradient(130deg,transparent 28%,rgba(74,220,255,.78) 29% 32%,transparent 33%),linear-gradient(65deg,transparent 44%,rgba(255,76,168,.72) 45% 48%,transparent 49%);clip-path:polygon(0 55%,12% 36%,22% 47%,31% 18%,40% 50%,55% 10%,67% 38%,76% 12%,100% 25%,87% 49%,100% 70%,75% 63%,61% 88%,45% 64%,33% 91%,18% 65%,4% 77%)}
     .splash.two{right:17%;bottom:6%;width:410px;height:220px;background:radial-gradient(ellipse at 35% 50%,rgba(72,238,255,.62),transparent 29%),radial-gradient(ellipse at 67% 50%,rgba(154,87,255,.66),transparent 30%),linear-gradient(115deg,transparent 28%,rgba(255,80,171,.45) 29% 35%,transparent 36%);filter:blur(.4px)}
     .brush{position:absolute;height:28px;transform:rotate(-10deg);opacity:.75;mix-blend-mode:screen;background:linear-gradient(90deg,transparent 0%,rgba(90,231,255,.15) 6%,rgba(90,231,255,.7) 26%,rgba(119,88,255,.75) 54%,rgba(255,83,176,.3) 78%,transparent 100%);filter:blur(1px);clip-path:polygon(0 35%,13% 15%,38% 24%,56% 8%,76% 21%,100% 45%,83% 72%,61% 59%,37% 77%,16% 60%,0 82%)}
     .brush.b1{right:5%;top:54%;width:470px}
     .brush.b2{right:22%;top:72%;width:330px;transform:rotate(12deg);opacity:.52}
+    
+    .panel-art{
+      position:absolute;
+      right:7%;
+      top:18%;
+      width:430px;
+      height:510px;
+      border:1px solid rgba(221,231,255,.14);
+      background:linear-gradient(160deg,rgba(16,22,37,.62),rgba(8,11,20,.78));
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(10px);
+      overflow:hidden;
+      clip-path:polygon(3% 1%, 97% 0%, 100% 97%, 78% 100%, 53% 95%, 22% 99%, 0% 88%, 2% 20%);
+    }
+    .panel-art:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(165deg,transparent 33%,rgba(84,233,255,.05) 34% 43%,transparent 44%),
+                 linear-gradient(20deg,transparent 44%,rgba(126,89,255,.11) 45% 52%,transparent 53%);
+      pointer-events:none;
+      z-index:2;
+    }
+    .panel-svg-bg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      pointer-events:none;
+      z-index:1;
+      opacity:0.95;
+    }
+    .micro{position:absolute;z-index:5;padding:6px 10px;font:700 .62rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.15em;color:#b8c4da;background:rgba(8,11,16,.85);border:1px solid rgba(255,255,255,.12);text-transform:uppercase;border-radius:4px;backdrop-filter:blur(4px);}
+    .micro.two{left:24px;top:26px;color:var(--cyan);border-color:rgba(84,233,255,.3)}
+    .micro.three{left:22px;bottom:26px;color:var(--pink);border-color:rgba(255,76,168,.3)}
+    .scribble{position:absolute;z-index:5;left:24px;bottom:68px;font-size:1rem;line-height:1.15;font-weight:900;text-transform:uppercase;transform:rotate(-7deg);color:#eef3ff;text-shadow:2px 2px 0 #7d59ff,-1px -1px 0 #54e9ff}
+    .tag{position:absolute;z-index:5;right:22px;bottom:20px;font-size:3rem;font-weight:900;letter-spacing:-.09em;transform:rotate(-7deg);color:#bdaeff;text-shadow:2px 2px 0 #ff4ca8,-3px -2px 0 #54e9ff;opacity:.88}
 
-    .panel-art{position:absolute;right:7%;top:22%;width:420px;height:470px;border:1px solid rgba(221,231,255,.11);background:linear-gradient(160deg,rgba(16,22,37,.58),rgba(8,11,20,.26));box-shadow:var(--shadow);backdrop-filter:blur(6px);overflow:hidden;clip-path:polygon(3% 1%,97% 0,100% 97%,78% 100%,53% 95%,22% 99%,0 88%,2% 20%)}
-    .panel-art:before{content:"";position:absolute;inset:0;background:linear-gradient(165deg,transparent 33%,rgba(84,233,255,.05) 34% 43%,transparent 44%),linear-gradient(20deg,transparent 44%,rgba(126,89,255,.11) 45% 52%,transparent 53%)}
-    .hood{position:absolute;left:80px;top:48px;width:265px;height:280px;background:linear-gradient(155deg,#dde7ff 0%,#7481ad 25%,#1d2743 44%,#0d1422 75%);clip-path:polygon(33% 0,53% 8%,64% 17%,79% 18%,100% 37%,84% 59%,75% 82%,51% 100%,29% 84%,20% 68%,0 55%,14% 33%);filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
-    .hood:before{content:"";position:absolute;inset:38px 46px 100px;background:linear-gradient(135deg,#0d1420 0 45%,#121c32 46%);clip-path:polygon(8% 0,88% 16%,100% 92%,31% 100%,0 55%)}
-    .hood:after{content:"";position:absolute;left:94px;top:110px;width:74px;height:38px;background:linear-gradient(90deg,transparent,#53e8ff 25% 55%,#7d59ff 76%,transparent);filter:blur(7px);opacity:.9;transform:skewX(-24deg)}
-    .cloak{position:absolute;left:45px;bottom:-18px;width:345px;height:235px;background:linear-gradient(135deg,#283148 0%,#131c2f 36%,#090d16 75%);clip-path:polygon(10% 0,83% 13%,100% 58%,82% 89%,44% 75%,16% 100%,0 44%);opacity:.96}
-    .weapon{position:absolute;right:15px;bottom:44px;width:280px;height:26px;background:linear-gradient(180deg,#a7b5d5,#2b3347 40%,#0c121c 75%);transform:rotate(12deg);box-shadow:0 8px 25px rgba(0,0,0,.55)}
-    .weapon:before{content:"";position:absolute;left:-16px;top:-6px;width:46px;height:40px;border:4px solid #232b3b;border-bottom-width:8px;transform:skewX(-12deg)}
-    .weapon:after{content:"";position:absolute;left:80px;top:4px;width:120px;height:4px;background:linear-gradient(90deg,rgba(84,233,255,.2),var(--cyan),transparent);filter:blur(1px)}
-    .micro{position:absolute;padding:6px 9px;font:700 .62rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.15em;color:#b8c4da;background:rgba(8,11,16,.75);border:1px solid rgba(255,255,255,.08);text-transform:uppercase}
-    .micro.one{left:20px;top:28px}.micro.two{right:16px;top:112px;color:var(--cyan)}.micro.three{left:18px;bottom:22px;color:var(--pink)}
-    .scribble{position:absolute;left:22px;bottom:70px;font-size:1rem;line-height:1.1;font-weight:900;text-transform:uppercase;transform:rotate(-7deg);color:#e9eeff;text-shadow:2px 2px 0 #7d59ff,-1px -1px 0 #54e9ff}
-    .tag{position:absolute;right:20px;bottom:16px;font-size:2.8rem;font-weight:900;letter-spacing:-.09em;transform:rotate(-7deg);color:#bdaeff;text-shadow:2px 2px 0 #ff4ca8,-3px -2px 0 #54e9ff;opacity:.72}
+    .spray-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px rgba(255,76,168,.9)}
+    .d1{right:18%;top:17%}.d2{right:13%;top:29%;width:3px;height:3px}.d3{right:25%;top:12%;width:4px;height:4px;background:var(--cyan)}.d4{right:34%;bottom:22%;width:3px;height:3px;background:var(--violet)}
 
     .section-block{padding:110px 0}
     .eyebrow{font-size:.7rem;letter-spacing:.18em;font-weight:900;color:#8f9bb0;text-transform:uppercase}
@@ -133,75 +156,223 @@
     .split h2 em{font-style:normal;color:var(--cyan)}
     .copy{color:#b3bed0;font-size:1.03rem;line-height:1.8;max-width:730px}
     .quote{margin-top:28px;padding-left:18px;border-left:3px solid var(--magenta);font-size:1.05rem;line-height:1.6;color:#dbe3f2}
-
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:36px}
-    .card{min-height:340px;padding:22px;position:relative;overflow:hidden;border:1px solid rgba(210,225,255,.09);background:linear-gradient(150deg,rgba(22,28,43,.92),rgba(10,14,22,.92));box-shadow:var(--shadow)}
-    .card:before{content:"";position:absolute;inset:-30% -10%;background:radial-gradient(circle at 65% 35%,rgba(84,233,255,.18),transparent 28%),radial-gradient(circle at 35% 76%,rgba(125,89,255,.2),transparent 27%);transform:rotate(-7deg)}
+    
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+    .card{
+      min-height:360px;
+      padding:24px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(210,225,255,.11);
+      background:linear-gradient(150deg,rgba(22,28,43,.92),rgba(10,14,22,.92));
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      border-radius:var(--radius);
+    }
+    .card:before{content:"";position:absolute;inset:-30% -10%;background:radial-gradient(circle at 65% 35%,rgba(84,233,255,.18),transparent 28%),radial-gradient(circle at 35% 76%,rgba(125,89,255,.2),transparent 27%);transform:rotate(-7deg);z-index:0}
     .card.accent:before{background:radial-gradient(circle at 70% 32%,rgba(255,76,168,.24),transparent 26%),radial-gradient(circle at 25% 70%,rgba(125,89,255,.18),transparent 28%)}
-    .card .num{position:absolute;right:15px;top:13px;font:800 .7rem ui-monospace,monospace;letter-spacing:.14em;color:#8190a8}
-    .card h3{position:relative;margin:98px 0 12px;font-size:1.55rem;line-height:1;text-transform:uppercase;letter-spacing:-.035em}
-    .card p{position:relative;margin:0;color:#aab4c7;line-height:1.65;font-size:.94rem;max-width:32ch}
-    .card .label{position:absolute;left:20px;bottom:18px;font:900 .64rem ui-monospace,monospace;letter-spacing:.18em;color:var(--cyan)}
+    .card>*{position:relative;z-index:1}
+    .card .num{align-self:flex-end;font:800 .7rem ui-monospace,monospace;letter-spacing:.14em;color:#8190a8}
+    .card h3{margin:14px 0 8px;font-size:1.55rem;line-height:1;text-transform:uppercase;letter-spacing:-.035em}
+    .card p{margin:0;color:#aab4c7;line-height:1.65;font-size:.94rem}
+    .card .label{margin-top:16px;font:900 .64rem ui-monospace,monospace;letter-spacing:.18em;color:var(--cyan)}
     .card.accent .label{color:var(--pink)}
-
-    .project{position:relative;margin-top:38px;border:1px solid rgba(224,234,255,.1);background:linear-gradient(155deg,rgba(18,24,38,.96),rgba(8,11,17,.96));min-height:330px;overflow:hidden;box-shadow:var(--shadow)}
+    .card-art-box{margin:16px 0 10px; border-radius:10px; overflow:hidden;}
+    
+    /* PROJECTS CONTAINER */
+    .project{
+      position:relative;
+      margin-top:38px;
+      border:1px solid rgba(224,234,255,.1);
+      background:linear-gradient(155deg,rgba(18,24,38,.96),rgba(8,11,17,.96));
+      min-height:380px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+    }
     .project:before{content:"";position:absolute;inset:0;background:linear-gradient(128deg,transparent 40%,rgba(84,233,255,.06) 41% 44%,transparent 45%),linear-gradient(18deg,transparent 22%,rgba(255,76,168,.06) 23% 31%,transparent 32%)}
-    .project-inner{position:relative;padding:34px;display:grid;grid-template-columns:1.25fr .75fr;gap:32px;align-items:end;min-height:330px}
-    .stamp{display:inline-block;padding:7px 10px;border:1px solid rgba(255,76,168,.36);color:var(--pink);font:900 .62rem ui-monospace,monospace;letter-spacing:.16em;transform:rotate(-3deg);background:rgba(255,76,168,.05)}
+    .project-inner{position:relative;padding:34px;display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;min-height:380px}
+    .stamp{display:inline-block;padding:7px 12px;border:1px solid rgba(255,76,168,.36);color:var(--pink);font:900 .62rem ui-monospace,monospace;letter-spacing:.16em;transform:rotate(-3deg);background:rgba(255,76,168,.05);border-radius:6px;}
     .project h2{margin:20px 0 8px;font-size:clamp(2.6rem,5vw,5.2rem);letter-spacing:-.06em;line-height:.88;text-transform:uppercase}
     .project h2 span{color:var(--cyan)}
     .project p{color:#aeb8ca;max-width:54ch;line-height:1.75}
-    .specs{justify-self:end;width:min(310px,100%);border-left:1px solid rgba(255,255,255,.1);padding-left:20px}
-    .spec{display:flex;justify-content:space-between;gap:20px;padding:11px 0;border-bottom:1px dashed rgba(255,255,255,.09);font-size:.74rem;text-transform:uppercase;letter-spacing:.12em}
+    .specs{width:100%;border-left:1px solid rgba(255,255,255,.1);padding-left:20px;margin-top:16px;}
+    .spec{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.09);font-size:.74rem;text-transform:uppercase;letter-spacing:.12em}
     .spec b{color:#e4eaff}.spec span{color:#7d8ba4;text-align:right}
 
+    /* PROJECT WORKSTATION & HAMMER HIT */
+    .project-workstation{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      position:relative;
+      background:rgba(10,14,22,.65);
+      padding:24px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      box-shadow:inset 0 0 30px rgba(0,0,0,.45);
+    }
+    .terminal-progress-wrap{
+      background:#070a0f;
+      border:1px solid rgba(255,255,255,.1);
+      padding:14px;
+      border-radius:8px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+    .term-meta{
+      display:flex;
+      justify-content:space-between;
+      font-size:.7rem;
+      color:#9aa7bd;
+      margin-bottom:8px;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+    .term-bar-container{
+      height:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:4px;
+      overflow:hidden;
+      position:relative;
+    }
+    .term-bar-fill{
+      height:100%;
+      width:68%;
+      background:linear-gradient(90deg, #ff4ca8 0%, #7d59ff 45%, #54e9ff 80%, #c3ff61 100%);
+      box-shadow:0 0 16px rgba(195,255,97,.65);
+      position:relative;
+      animation:pulse-progress 3.2s ease-in-out infinite alternate;
+    }
+    @keyframes pulse-progress{
+      0%{width:62%; filter:brightness(0.9);}
+      100%{width:74%; filter:brightness(1.15);}
+    }
+    .term-blocks{
+      position:absolute;
+      inset:0;
+      background-image:linear-gradient(90deg, transparent 8px, #070a0f 8px, #070a0f 11px);
+      background-size:11px 100%;
+      mix-blend-mode:multiply;
+      pointer-events:none;
+    }
+
+    .hammer-box{
+      width:100%;
+      height:160px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .hammer-svg{
+      width:100%;
+      height:100%;
+      overflow:visible;
+    }
+    .hammer-pivot{
+      transform-origin: 320px 100px;
+      animation: hammer-hit 1.25s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+    }
+    @keyframes hammer-hit{
+      0% { transform: rotate(-38deg); }
+      50% { transform: rotate(-44deg); }
+      75% { transform: rotate(14deg); }
+      82% { transform: rotate(8deg); }
+      100% { transform: rotate(-38deg); }
+    }
+    .spark-burst{
+      transform-origin: 215px 125px;
+      animation: sparks-fire 1.25s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+    }
+    @keyframes sparks-fire{
+      0%, 72% { opacity: 0; transform: scale(0.3); }
+      75% { opacity: 1; transform: scale(1.3); }
+      90% { opacity: 0; transform: scale(1.6); }
+      100% { opacity: 0; }
+    }
+    .anvil-vibe{
+      animation: anvil-shake 1.25s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+    }
+    @keyframes anvil-shake{
+      0%, 74% { transform: translate(0, 0); }
+      75% { transform: translate(-2px, 3px); }
+      82% { transform: translate(2px, -1px); }
+      90% { transform: translate(0, 0); }
+    }
+    
     .founder{display:grid;grid-template-columns:.8fr 1.2fr;gap:30px;align-items:stretch}
-    .founder-art,.founder-copy{border:1px solid rgba(210,225,255,.1);background:linear-gradient(145deg,rgba(19,24,39,.9),rgba(9,12,19,.95));min-height:430px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
-    .founder-art:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 52% 45%,rgba(100,74,255,.34),transparent 35%),radial-gradient(circle at 25% 76%,rgba(84,233,255,.2),transparent 25%),radial-gradient(circle at 85% 20%,rgba(255,76,168,.16),transparent 25%)}
-    .founder-art:after{content:"ROGUE";position:absolute;inset:17% auto auto 8%;font-size:5rem;font-weight:900;letter-spacing:-.09em;color:rgba(255,255,255,.06);transform:rotate(-9deg);white-space:nowrap}
-    .founder-glyph{position:absolute;left:15%;top:18%;width:68%;height:58%;clip-path:polygon(29% 0,49% 5%,68% 21%,86% 28%,100% 54%,82% 70%,68% 95%,40% 100%,28% 87%,6% 78%,0 52%,11% 31%);background:linear-gradient(155deg,#9dc1ff 0%,#55599b 28%,#1a2340 47%,#080b13 78%);filter:drop-shadow(0 20px 40px rgba(0,0,0,.55))}
-    .founder-glyph:before{content:"";position:absolute;left:34%;top:36%;width:32%;height:13%;background:linear-gradient(90deg,transparent,#54e9ff 24%,#7d59ff 62%,#ff4ca8 88%,transparent);filter:blur(8px);transform:skewX(-18deg)}
-    .founder-glyph:after{content:"";position:absolute;left:27%;top:14%;width:46%;height:63%;border:1px solid rgba(210,230,255,.14);clip-path:polygon(30% 0,76% 11%,100% 52%,76% 100%,18% 90%,0 42%)}
+    .founder-art,.founder-copy{
+      border:1px solid rgba(210,225,255,.1);
+      background:linear-gradient(145deg,rgba(19,24,39,.9),rgba(9,12,19,.95));
+      min-height:430px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+    }
+    .founder-art{padding:0;display:flex;align-items:center;justify-content:center}
     .founder-copy{padding:36px;display:flex;flex-direction:column;justify-content:end}
     .founder-copy .mini{font:900 .64rem ui-monospace,monospace;letter-spacing:.17em;color:#8290aa}
     .founder-copy h2{margin:14px 0 12px;font-size:clamp(2.3rem,5vw,5rem);line-height:.9;letter-spacing:-.06em;text-transform:none}
     .founder-copy h2 .rogue{color:var(--magenta);text-shadow:0 0 30px rgba(255,76,168,.16)}
     .founder-copy p{color:#aeb8c9;line-height:1.8;max-width:50ch}
     .signature{margin-top:22px;font:900 .76rem ui-monospace,monospace;letter-spacing:.14em;color:#9aa7bd}
-
+    
     .connect{padding:100px 0 130px}
-    .connect-box{border:1px solid rgba(223,233,255,.1);padding:42px;background:linear-gradient(135deg,rgba(16,22,36,.96),rgba(10,13,20,.98));display:flex;justify-content:space-between;gap:34px;align-items:end;position:relative;overflow:hidden}
+    .connect-box{
+      border:1px solid rgba(223,233,255,.1);
+      padding:42px;
+      background:linear-gradient(135deg,rgba(16,22,36,.96),rgba(10,13,20,.98));
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:34px;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+    }
     .connect-box:before{content:"";position:absolute;inset:-30%;background:linear-gradient(110deg,transparent 36%,rgba(84,233,255,.05) 37% 46%,transparent 47%),linear-gradient(70deg,transparent 48%,rgba(125,89,255,.08) 49% 61%,transparent 62%);transform:rotate(-6deg)}
     .connect-box>*{position:relative}
-    .connect-box h2{margin:10px 0;font-size:clamp(2.6rem,6vw,5.7rem);line-height:.88;letter-spacing:-.06em;text-transform:uppercase}
+    .connect-box h2{margin:10px 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.92;letter-spacing:-.06em;text-transform:uppercase}
     .connect-box h2 span{color:var(--magenta)}
     .connect-box p{color:#aeb8ca;max-width:58ch;line-height:1.75}
     .footer{padding:0 0 28px;display:flex;justify-content:space-between;gap:16px;align-items:center;color:#7e8ca2;font:700 .66rem ui-monospace,monospace;letter-spacing:.13em;text-transform:uppercase}
     .footer .links{display:flex;gap:18px}.footer a:hover{color:#fff}
-
-    .spray-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px rgba(255,76,168,.9)}
-    .d1{right:18%;top:17%}.d2{right:13%;top:29%;width:3px;height:3px}.d3{right:25%;top:12%;width:4px;height:4px;background:var(--cyan)}.d4{right:34%;bottom:22%;width:3px;height:3px;background:var(--violet)}
-
+    
     @media (max-width: 960px){
       .nav{display:none}
       .hero{grid-template-columns:1fr;padding-top:120px}
-      .hero-art{min-height:520px;margin-top:-10px}
-      .panel-art{right:10%;width:360px;height:410px}
-      .hood{left:69px;top:43px;transform:scale(.88);transform-origin:top left}.cloak{left:40px;bottom:-20px;transform:scale(.9);transform-origin:bottom left}.weapon{right:-20px;transform:scale(.9);transform-origin:right center}
+      .hero-art{min-height:540px;margin-top:-10px}
+      .panel-art{right:5%;width:380px;height:490px}
       .split{grid-template-columns:1fr;gap:22px}
       .cards{grid-template-columns:1fr}
-      .project-inner{grid-template-columns:1fr}.specs{justify-self:start;width:100%;max-width:420px}
+      .project-inner{grid-template-columns:1fr}
+      .specs{border-left:none;padding-left:0}
       .founder{grid-template-columns:1fr}
-      .connect-box{flex-direction:column;align-items:flex-start}
+      .connect-box{grid-template-columns:1fr}
     }
     @media (max-width: 600px){
-      .site-header{padding:14px 16px}.brand svg{width:126px}
+      .site-header{padding:14px 16px}
+      .brand svg{width:126px}
       .section{width:min(100% - 26px,1180px)}
       h1{font-size:clamp(3.05rem,17vw,5.1rem)}
-      .hero{padding-bottom:25px}.hero-art{min-height:410px}.panel-art{right:0;top:17%;width:300px;height:340px}.hood{left:52px;top:35px;transform:scale(.68)}.cloak{left:30px;bottom:-26px;transform:scale(.68)}.weapon{right:-6px;bottom:45px;transform:scale(.68)}.micro.two{right:8px}.scribble{font-size:.8rem}.tag{font-size:2.2rem}
+      .hero{padding-bottom:25px}
+      .hero-art{min-height:430px}
+      .panel-art{right:0;top:15%;width:100%;height:390px}
+      .micro.two{right:auto;left:18px}
+      .scribble{font-size:.8rem}
+      .tag{font-size:2.2rem}
       .section-block{padding:76px 0}
-      .card{min-height:300px}.card h3{margin-top:82px}
-      .project-inner{padding:24px}.project{min-height:0}.project h2{font-size:3.2rem}.connect{padding:78px 0 92px}.connect-box{padding:26px}.footer{padding-bottom:20px;flex-direction:column;align-items:flex-start}
+      .card{min-height:300px}
+      .card h3{margin-top:14px}
+      .project-inner{padding:24px}
+      .project{min-height:0}
+      .project h2{font-size:3.2rem}
+      .connect{padding:78px 0 92px}
+      .connect-box{padding:26px}
+      .footer{padding-bottom:20px;flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
@@ -229,6 +400,7 @@
   </header>
 
   <main id="top">
+    <!-- HERO SECTION WITH ASYMMETRIC CLIP-PATH CONTAINER & VECTOR ARTWORK -->
     <section class="section hero">
       <div class="hero-copy">
         <div class="status"><i></i> LAZARUS // RESEARCHING</div>
@@ -240,23 +412,162 @@
         </div>
         <div class="meta"><span>OPEN SOURCE</span><span>AI SECURITY</span><span>RED TEAMING</span></div>
       </div>
-
       <div class="hero-art" aria-hidden="true">
         <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
         <div class="splash one"></div><div class="splash two"></div>
         <div class="brush b1"></div><div class="brush b2"></div>
+        
+        <!-- RESTORED ORIGINAL ANGULAR POLYGON SHAPE -->
         <div class="panel-art">
-          <div class="micro one">FIELD NOTE // 001</div>
+          <svg class="panel-svg-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 900" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <filter id="magenta-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ff4ca8" flood-opacity="0.9"/>
+              </filter>
+              <filter id="cyan-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#54e9ff" flood-opacity="0.85"/>
+              </filter>
+              <filter id="acid-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#c3ff61" flood-opacity="0.8"/>
+              </filter>
+              <radialGradient id="bg-vignette" cx="50%" cy="45%" r="55%">
+                <stop offset="0%" stop-color="#181324" stop-opacity="0.85"/>
+                <stop offset="60%" stop-color="#0e0f17" stop-opacity="0.95"/>
+                <stop offset="100%" stop-color="#080a0f" stop-opacity="1"/>
+              </radialGradient>
+              <linearGradient id="blade-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#eef3ff"/>
+                <stop offset="40%" stop-color="#ff4ca8"/>
+                <stop offset="100%" stop-color="#3d0e23"/>
+              </linearGradient>
+            </defs>
+
+            <rect width="700" height="900" fill="#080a0f"/>
+            <rect width="700" height="900" fill="url(#bg-vignette)"/>
+
+            <!-- Forensic Grid Lines -->
+            <g stroke="rgba(255,76,168,0.06)" stroke-width="1.2">
+              <line x1="0" y1="200" x2="700" y2="200"/>
+              <line x1="0" y1="400" x2="700" y2="400"/>
+              <line x1="0" y1="600" x2="700" y2="600"/>
+              <line x1="0" y1="780" x2="700" y2="780"/>
+              <line x1="180" y1="0" x2="180" y2="900"/>
+              <line x1="350" y1="0" x2="350" y2="900"/>
+              <line x1="520" y1="0" x2="520" y2="900"/>
+            </g>
+
+            <!-- Barbed Vines -->
+            <g stroke="#ff4ca8" stroke-width="4.5" stroke-linecap="round" fill="none" filter="url(#magenta-glow)">
+              <path d="M90,120 Q80,180 110,240"/>
+              <line x1="75" y1="140" x2="95" y2="135"/>
+              <line x1="105" y1="170" x2="85" y2="185"/>
+              <line x1="80" y1="210" x2="105" y2="225"/>
+              <path d="M610,125 Q620,185 590,245"/>
+              <line x1="625" y1="145" x2="605" y2="140"/>
+              <line x1="595" y1="175" x2="615" y2="190"/>
+              <line x1="620" y1="215" x2="595" y2="230"/>
+            </g>
+
+            <!-- Scales of Evaluation -->
+            <g id="scales">
+              <circle cx="210" cy="330" r="14" fill="none" stroke="#54e9ff" stroke-width="3" filter="url(#cyan-glow)"/>
+              <circle cx="210" cy="330" r="5" fill="#eef3ff"/>
+              <path d="M140,390 L210,365 L280,390" fill="none" stroke="#54e9ff" stroke-width="4.5" stroke-linecap="round" filter="url(#cyan-glow)"/>
+              <polygon points="210,350 216,365 204,365" fill="#ff4ca8"/>
+              <g>
+                <line x1="140" y1="390" x2="115" y2="450" stroke="#7a8da6" stroke-width="1.8" stroke-dasharray="6 4"/>
+                <line x1="140" y1="390" x2="165" y2="450" stroke="#7a8da6" stroke-width="1.8" stroke-dasharray="6 4"/>
+                <path d="M105,450 Q140,480 175,450 Z" fill="#141a27" stroke="#ff4ca8" stroke-width="2.5"/>
+                <circle cx="132" cy="456" r="3.5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
+                <circle cx="145" cy="454" r="4.5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
+                <path d="M140,465 Q140,495 137,505" fill="none" stroke="#ff4ca8" stroke-width="3" stroke-linecap="round" filter="url(#magenta-glow)"/>
+              </g>
+              <g>
+                <line x1="280" y1="390" x2="255" y2="470" stroke="#7a8da6" stroke-width="1.8" stroke-dasharray="6 4"/>
+                <line x1="280" y1="390" x2="305" y2="470" stroke="#7a8da6" stroke-width="1.8" stroke-dasharray="6 4"/>
+                <path d="M245,470 Q280,500 315,470 Z" fill="#141a27" stroke="#54e9ff" stroke-width="2.5"/>
+                <polygon points="274,466 286,466 280,476" fill="#c3ff61" filter="url(#acid-glow)"/>
+                <circle cx="280" cy="460" r="3.5" fill="#54e9ff"/>
+              </g>
+            </g>
+
+            <!-- Figure & Robes -->
+            <g id="figure">
+              <path d="M300,430 L220,720 L245,670 L275,755 L310,690 L340,770 L400,690 L450,780 L480,695 L520,760 L440,420 Z" fill="#330d22" stroke="#781d49" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M325,370 Q370,390 410,370 L435,530 L395,780 L370,780 L380,580 L350,560 L335,760 L305,740 L285,540 Z" fill="#0e121a" stroke="#253245" stroke-width="2.5" stroke-linejoin="round"/>
+              <circle cx="365" cy="510" r="22" fill="#141924" stroke="#ff4ca8" stroke-width="3" filter="url(#magenta-glow)"/>
+              <circle cx="365" cy="510" r="13" fill="#080a0f" stroke="#54e9ff" stroke-width="2"/>
+              <polygon points="365,492 370,505 383,510 370,515 365,528 360,515 347,510 360,505" fill="#ff4ca8"/>
+              <path d="M375,560 L395,650 L385,780 L365,780 L370,660 Z" fill="#baa4aa"/>
+              <g stroke="#ff4ca8" stroke-width="2.5">
+                <line x1="373" y1="610" x2="395" y2="625"/>
+                <line x1="395" y1="640" x2="370" y2="655"/>
+                <line x1="368" y1="690" x2="390" y2="705"/>
+                <line x1="388" y1="720" x2="366" y2="735"/>
+                <line x1="365" y1="755" x2="388" y2="765"/>
+              </g>
+              <polygon points="365,410 374,428 365,446 356,428" fill="#ff4ca8" stroke="#080a0f" stroke-width="1.5" filter="url(#magenta-glow)"/>
+              <line x1="335" y1="375" x2="365" y2="410" stroke="#ff4ca8" stroke-width="2.5"/>
+              <line x1="395" y1="375" x2="365" y2="410" stroke="#ff4ca8" stroke-width="2.5"/>
+              <polygon points="352,340 378,340 374,380 356,380" fill="#c2b2b6"/>
+              <polygon points="345,290 385,290 380,345 365,360 348,345" fill="#dfd0d4"/>
+              <path d="M352,316 L364,318 M353,323 L363,323" stroke="#080a0f" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="359" cy="320" r="2.5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
+              <path d="M374,318 L386,316 M375,323 L385,323" stroke="#080a0f" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="380" cy="320" r="2.5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
+              <path d="M363,342 Q372,347 377,338" fill="none" stroke="#ff4ca8" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M335,270 L310,310 L330,310 L310,360 L338,340 L328,420 L350,380 L356,435 L366,380 L378,435 L385,380 L405,420 L395,340 L425,360 L405,310 L425,310 L395,270 L380,240 L350,240 Z" fill="#111620" stroke="#080a0f" stroke-width="3" stroke-linejoin="round"/>
+              <g stroke="#080a0f" stroke-width="1.8" fill="url(#blade-gradient)" filter="url(#magenta-glow)">
+                <path d="M330,245 Q315,230 320,215 Q335,225 330,245 Z"/>
+                <path d="M340,235 Q330,215 340,205 Q350,215 340,235 Z"/>
+                <path d="M352,230 Q350,205 360,195 Q366,210 352,230 Z"/>
+                <path d="M370,230 Q372,205 362,195 Q378,210 370,230 Z"/>
+                <path d="M382,235 Q392,215 382,205 Q372,215 382,235 Z"/>
+                <path d="M392,245 Q407,230 402,215 Q387,225 392,245 Z"/>
+              </g>
+            </g>
+
+            <!-- Executioner Sword -->
+            <g id="sword">
+              <path d="M410,390 L460,490 L480,480" fill="none" stroke="#baa4aa" stroke-width="12" stroke-linecap="round"/>
+              <rect x="460" y="475" width="28" height="12" rx="4" fill="#080a0f" stroke="#ff4ca8" stroke-width="2"/>
+              <polygon points="450,510 495,510 515,502 490,522 455,522 430,502" fill="#131924" stroke="#54e9ff" stroke-width="2"/>
+              <circle cx="472" cy="516" r="4.5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
+              <polygon points="465,522 480,522 498,750 488,775 470,750" fill="#0e131d" stroke="#54e9ff" stroke-width="2.5"/>
+              <line x1="465" y1="524" x2="487" y2="772" stroke="#ff4ca8" stroke-width="4" stroke-linecap="round" filter="url(#magenta-glow)"/>
+              <line x1="472" y1="535" x2="480" y2="730" stroke="#eef3ff" stroke-width="1.8" stroke-dasharray="12 6"/>
+              <path d="M488,775 Q494,805 491,818" fill="none" stroke="#ff4ca8" stroke-width="3" stroke-linecap="round" filter="url(#magenta-glow)"/>
+            </g>
+
+            <!-- Top Brush Rebrand Typography -->
+            <g id="typography">
+              <circle cx="560" cy="54" r="5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
+              <path d="M190,75 L200,150 L245,145" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M255,145 L275,70 L295,145 M242,115 L310,110" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="268" cy="58" r="3.5" fill="#ff4ca8"/>
+              <circle cx="282" cy="58" r="3.5" fill="#ff4ca8"/>
+              <path d="M318,78 L360,78 L320,145 L364,142" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M375,145 L395,72 L415,145 M368,116 L422,113" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M432,74 L436,145 M434,74 Q468,70 464,105 Q460,120 435,118 M448,116 L472,145" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M485,76 L488,124 Q492,146 512,146 Q532,146 535,124 L538,76" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M582,84 Q548,68 552,98 Q556,118 576,122 Q592,128 582,146 Q554,154 544,136" fill="none" stroke="#eef3ff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M175,165 Q350,148 580,160" fill="none" stroke="#ff4ca8" stroke-width="5" stroke-linecap="round" stroke-dasharray="24 14" filter="url(#magenta-glow)"/>
+              <path d="M190,172 Q350,158 560,166" fill="none" stroke="#54e9ff" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="14 8" filter="url(#cyan-glow)"/>
+            </g>
+          </svg>
+
+          <!-- BADGES (FIELD NOTE REMOVED, AI/SEC SHIFTED TO CORNER) -->
           <div class="micro two">AI / SEC</div>
           <div class="micro three">NOT MAGIC // YET</div>
-          <div class="hood"></div><div class="cloak"></div><div class="weapon"></div>
           <div class="scribble">break it.<br>learn it.<br>secure it.</div>
           <div class="tag">LZRS</div>
         </div>
+
         <span class="spray-dot d1"></span><span class="spray-dot d2"></span><span class="spray-dot d3"></span><span class="spray-dot d4"></span>
       </div>
     </section>
 
+    <!-- RESEARCH FOCUS AREAS -->
     <section class="section section-block" id="focus">
       <div class="split">
         <div>
@@ -271,12 +582,130 @@
 
       <div class="eyebrow" style="margin-top:72px">02 / Research areas</div>
       <div class="cards">
-        <article class="card"><div class="num">/ 01</div><h3>AI-powered<br>security tooling</h3><p>Use models as force multipliers for reconnaissance, analysis, testing, and repeatable security work.</p><div class="label">// BUILD</div></article>
-        <article class="card accent"><div class="num">/ 02</div><h3>Red<br>teaming</h3><p>Probe systems, expose failure modes, and turn attack paths into knowledge the community can act on.</p><div class="label">// BREAK</div></article>
-        <article class="card"><div class="num">/ 03</div><h3>LLMs securing<br>other LLMs</h3><p>Explore model-to-model defense patterns for systems that need to reason about their own risks.</p><div class="label">// DEFEND</div></article>
+        <!-- 01: BUILD -->
+        <article class="card">
+          <div class="num">/ 01</div>
+          <div>
+            <h3>AI-powered<br>security tooling</h3>
+            <p>Use models as force multipliers for reconnaissance, analysis, testing, and repeatable security work.</p>
+            <div class="card-art-box" style="border: 1px solid rgba(84,233,255,.25);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="auto" style="display:block;">
+                <defs>
+                  <filter id="build-cyan-glow">
+                    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#54e9ff" flood-opacity="0.8"/>
+                  </filter>
+                  <filter id="build-acid-glow">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#c3ff61" flood-opacity="0.9"/>
+                  </filter>
+                </defs>
+                <rect width="600" height="240" fill="#0b0f17"/>
+                <g stroke="#1d273a" stroke-width="2">
+                  <line x1="40" y1="200" x2="160" y2="200"/>
+                  <line x1="160" y1="200" x2="220" y2="120"/>
+                  <line x1="220" y1="120" x2="380" y2="120"/>
+                  <line x1="380" y1="120" x2="440" y2="50"/>
+                  <line x1="440" y1="50" x2="560" y2="50"/>
+                </g>
+                <g stroke="#26354f" stroke-width="1.5" stroke-dasharray="6 4">
+                  <line x1="220" y1="200" x2="380" y2="200"/>
+                  <line x1="380" y1="200" x2="440" y2="120"/>
+                  <line x1="160" y1="120" x2="220" y2="50"/>
+                </g>
+                <circle cx="160" cy="200" r="7" fill="#54e9ff" filter="url(#build-cyan-glow)"/>
+                <circle cx="220" cy="120" r="9" fill="#c3ff61" filter="url(#build-acid-glow)"/>
+                <circle cx="380" cy="120" r="9" fill="#54e9ff" filter="url(#build-cyan-glow)"/>
+                <circle cx="440" cy="50" r="7" fill="#7ca7ff"/>
+                <text x="42" y="55" fill="#54e9ff" font-family="monospace" font-size="13" letter-spacing="2">&gt; [PIPELINE_INIT]</text>
+                <text x="42" y="75" fill="#677893" font-family="monospace" font-size="11">&gt; RECON_AGENT: DEPLOYED</text>
+                <text x="42" y="93" fill="#677893" font-family="monospace" font-size="11">&gt; AST_SCAN: 100% CLEAN</text>
+                <path d="M290,170 L340,150 L320,195 Z" fill="none" stroke="#c3ff61" stroke-width="3" stroke-linejoin="round" filter="url(#build-acid-glow)"/>
+                <text x="360" y="195" fill="#c3ff61" font-family="'Impact', sans-serif" font-size="28" transform="rotate(-6 360 195)" filter="url(#build-acid-glow)">FORGE_NEW();</text>
+                <path d="M470,160 Q520,130 560,170" fill="none" stroke="#54e9ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="10 5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="label">// BUILD</div>
+        </article>
+
+        <!-- 02: BREAK -->
+        <article class="card accent">
+          <div class="num">/ 02</div>
+          <div>
+            <h3>Red<br>teaming</h3>
+            <p>Probe systems, expose failure modes, and turn attack paths into knowledge the community can act on.</p>
+            <div class="card-art-box" style="border: 1px solid rgba(255,76,168,.25);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="auto" style="display:block;">
+                <defs>
+                  <filter id="pink-glow-mini">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ff4ca8" flood-opacity="0.9"/>
+                  </filter>
+                  <filter id="cyan-glow-mini">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#54e9ff" flood-opacity="0.9"/>
+                  </filter>
+                </defs>
+                <rect width="600" height="240" fill="#0b0f17"/>
+                <g stroke="#2c3a56" stroke-width="2">
+                  <line x1="80" y1="60" x2="210" y2="120"/>
+                  <line x1="80" y1="180" x2="210" y2="120"/>
+                  <line x1="210" y1="120" x2="350" y2="80"/>
+                  <line x1="210" y1="120" x2="360" y2="160"/>
+                  <line x1="350" y1="80" x2="490" y2="110"/>
+                  <line x1="360" y1="160" x2="490" y2="110"/>
+                </g>
+                <circle cx="80" cy="60" r="7" fill="#54e9ff" filter="url(#cyan-glow-mini)"/>
+                <circle cx="80" cy="180" r="7" fill="#54e9ff"/>
+                <circle cx="210" cy="120" r="9" fill="#ff4ca8" filter="url(#pink-glow-mini)"/>
+                <circle cx="350" cy="80" r="8" fill="#c3ff61"/>
+                <circle cx="360" cy="160" r="6" fill="#7d59ff"/>
+                <circle cx="490" cy="110" r="12" fill="#ff4ca8" filter="url(#pink-glow-mini)"/>
+                <path d="M470,80 L520,140 M520,80 L470,140" stroke="#ff4ca8" stroke-width="5" stroke-linecap="round" filter="url(#pink-glow-mini)"/>
+                <text x="320" y="210" fill="#ff4ca8" font-family="'Impact', sans-serif" font-size="24" transform="rotate(-5 320 210)" filter="url(#pink-glow-mini)">FAIL_SAFE: BROKEN</text>
+              </svg>
+            </div>
+          </div>
+          <div class="label">// BREAK</div>
+        </article>
+
+        <!-- 03: DEFEND -->
+        <article class="card">
+          <div class="num">/ 03</div>
+          <div>
+            <h3>LLMs securing<br>other LLMs</h3>
+            <p>Explore model-to-model defense patterns for systems that need to reason about their own risks.</p>
+            <div class="card-art-box" style="border: 1px solid rgba(125,89,255,.3);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="auto" style="display:block;">
+                <defs>
+                  <filter id="def-shield-glow">
+                    <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#7d59ff" flood-opacity="0.9"/>
+                  </filter>
+                  <filter id="def-cyan-glow">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#54e9ff" flood-opacity="0.9"/>
+                  </filter>
+                </defs>
+                <rect width="600" height="240" fill="#0b0f17"/>
+                <g stroke="#1e183a" stroke-width="1.5">
+                  <polygon points="120,40 180,75 180,145 120,180 60,145 60,75"/>
+                  <polygon points="240,40 300,75 300,145 240,180 180,145 180,75"/>
+                  <polygon points="180,145 240,180 240,235 180,235 120,235 120,180"/>
+                </g>
+                <path d="M370,40 L490,40 C490,130 430,180 370,210 C310,180 250,130 250,40 Z" fill="#13122b" stroke="#7d59ff" stroke-width="3" filter="url(#def-shield-glow)"/>
+                <ellipse cx="370" cy="115" rx="55" ry="32" fill="#0b0f17" stroke="#54e9ff" stroke-width="2"/>
+                <circle cx="370" cy="115" r="14" fill="#54e9ff" filter="url(#def-cyan-glow)"/>
+                <circle cx="370" cy="115" r="5" fill="#fff"/>
+                <path d="M220,95 L265,115 L220,135" fill="none" stroke="#ff4ca8" stroke-width="4" stroke-linecap="round"/>
+                <path d="M205,105 L235,115 L205,125" fill="none" stroke="#ff4ca8" stroke-width="2.5" stroke-linecap="round"/>
+                <text x="300" y="225" fill="#54e9ff" font-family="'Impact', sans-serif" font-size="22" letter-spacing="2" transform="rotate(-3 300 225)" filter="url(#def-cyan-glow)">SHIELD_ACTIVE</text>
+                <polygon points="510,70 514,80 525,84 514,88 510,98 506,88 495,84 506,80" fill="#c3ff61"/>
+                <polygon points="460,170 463,178 472,181 463,184 460,192 457,184 448,181 457,178" fill="#ff4ca8"/>
+              </svg>
+            </div>
+          </div>
+          <div class="label">// DEFEND</div>
+        </article>
       </div>
     </section>
 
+    <!-- PROJECTS -->
     <section class="section section-block" id="projects">
       <div class="eyebrow">03 / Projects</div>
       <div class="project">
@@ -286,21 +715,103 @@
             <h2>First experiment:<br><span>in progress.</span></h2>
             <p>We don't have a flagship tool to fake. This section is ready for the first real release — with a GitHub link, project notes, research scope, and the people behind it.</p>
             <a class="btn ghost" style="margin-top:18px" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">Open LaZarus on GitHub ↗</a>
+            
+            <div class="specs">
+              <div class="spec"><b>STATUS</b><span>RESEARCHING</span></div>
+              <div class="spec"><b>MODEL</b><span>EXPERIMENTAL</span></div>
+              <div class="spec"><b>LICENSE</b><span>OPEN SOURCE</span></div>
+              <div class="spec"><b>RESEARCHERS</b><span>COMING SOON</span></div>
+            </div>
           </div>
-          <div class="specs">
-            <div class="spec"><b>STATUS</b><span>RESEARCHING</span></div>
-            <div class="spec"><b>MODEL</b><span>EXPERIMENTAL</span></div>
-            <div class="spec"><b>LICENSE</b><span>OPEN SOURCE</span></div>
-            <div class="spec"><b>RESEARCHERS</b><span>COMING SOON</span></div>
+
+          <!-- ANIMATED HAMMER + TERMINAL WORKBENCH -->
+          <div class="project-workstation">
+            <div class="hammer-box">
+              <svg class="hammer-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <filter id="impact-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#ff4ca8" flood-opacity="0.95"/>
+                  </filter>
+                  <filter id="spark-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#c3ff61" flood-opacity="1"/>
+                  </filter>
+                </defs>
+
+                <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
+                  <line x1="60" y1="180" x2="340" y2="180"/>
+                  <line x1="60" y1="140" x2="340" y2="140"/>
+                </g>
+
+                <g class="anvil-vibe">
+                  <polygon points="175,135 245,135 235,175 185,175" fill="#131a28" stroke="#54e9ff" stroke-width="2"/>
+                  <line x1="170" y1="135" x2="250" y2="135" stroke="#ff4ca8" stroke-width="4" stroke-linecap="round" filter="url(#impact-glow)"/>
+                  <text x="188" y="160" fill="#60718d" font-family="monospace" font-size="9" letter-spacing="1">TARGET</text>
+                </g>
+
+                <g class="spark-burst">
+                  <path d="M210,132 L185,115 M210,132 L235,115 M210,132 L175,130 M210,132 L245,128 M210,132 L200,95 M210,132 L225,95" stroke="#c3ff61" stroke-width="3" stroke-linecap="round" filter="url(#spark-glow)"/>
+                  <circle cx="180" cy="110" r="3" fill="#ff4ca8" filter="url(#impact-glow)"/>
+                  <circle cx="240" cy="110" r="2.5" fill="#54e9ff"/>
+                  <circle cx="210" cy="90" r="3.5" fill="#c3ff61" filter="url(#spark-glow)"/>
+                </g>
+
+                <g class="hammer-pivot">
+                  <rect x="200" y="93" width="130" height="12" rx="4" fill="#0d1422" stroke="#2a374e" stroke-width="2"/>
+                  <line x1="220" y1="99" x2="310" y2="99" stroke="#7d59ff" stroke-width="3" stroke-dasharray="8 4"/>
+                  <rect x="290" y="91" width="35" height="16" rx="3" fill="#161f30" stroke="#ff4ca8" stroke-width="1.5"/>
+                  <path d="M165,70 L210,70 L205,128 L170,128 Z" fill="#121824" stroke="#54e9ff" stroke-width="2.5"/>
+                  <rect x="163" y="122" width="44" height="7" rx="2" fill="#ff4ca8" filter="url(#impact-glow)"/>
+                  <circle cx="188" cy="85" r="4" fill="#c3ff61" filter="url(#spark-glow)"/>
+                  <text x="180" y="108" fill="#54e9ff" font-family="'Impact', sans-serif" font-size="11" letter-spacing="1">LZRS</text>
+                </g>
+              </svg>
+            </div>
+
+            <div class="terminal-progress-wrap">
+              <div class="term-meta">
+                <span>&gt; LAB_BUILD_STATUS: COMPILING</span>
+                <span style="color:var(--acid);">68.4%</span>
+              </div>
+              <div class="term-bar-container">
+                <div class="term-bar-fill"></div>
+                <div class="term-blocks"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.64rem; color:#6f7d95;">
+                <span>ERR_TOLERANCE: [STRICT]</span>
+                <span>FORGING_EXPLOITS</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- FOUNDER -->
     <section class="section section-block" id="founder">
       <div class="eyebrow">04 / Founding signal</div>
       <div class="founder" style="margin-top:22px">
-        <div class="founder-art"><div class="founder-glyph"></div></div>
+        <div class="founder-art">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+            <defs>
+              <filter id="neon-glow-founder" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#ff4ca8" flood-opacity="0.85"/>
+              </filter>
+            </defs>
+            <rect width="500" height="500" fill="#0e131d"/>
+            <polygon points="250,70 380,140 410,290 350,420 250,470 150,420 90,290 120,140" fill="#141a27" stroke="#2c374d" stroke-width="2"/>
+            <polygon points="250,110 340,160 360,280 250,410 140,280 160,160" fill="#0a0d14"/>
+            <path d="M190,130 L220,70 L250,110 L280,70 L310,130 Z" fill="none" stroke="#ff4ca8" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" filter="url(#neon-glow-founder)"/>
+            <circle cx="220" cy="65" r="4" fill="#c3ff61"/>
+            <circle cx="250" cy="105" r="4" fill="#c3ff61"/>
+            <circle cx="280" cy="65" r="4" fill="#c3ff61"/>
+            <polygon points="170,230 330,230 310,265 190,265" fill="#54e9ff" opacity="0.9"/>
+            <line x1="150" y1="248" x2="350" y2="248" stroke="#ffffff" stroke-width="2"/>
+            <path d="M110,340 Q70,360 100,410 Q140,430 130,370" fill="none" stroke="#54e9ff" stroke-width="3" stroke-linecap="round"/>
+            <line x1="390" y1="360" x2="430" y2="400" stroke="#c3ff61" stroke-width="4" stroke-linecap="round"/>
+            <line x1="430" y1="360" x2="390" y2="400" stroke="#c3ff61" stroke-width="4" stroke-linecap="round"/>
+            <text x="70" y="460" fill="#ff4ca8" font-family="'Impact', sans-serif" font-size="40" letter-spacing="4" transform="rotate(-5 70 460)" filter="url(#neon-glow-founder)">THE ROGUE PRINCE</text>
+          </svg>
+        </div>
         <div class="founder-copy">
           <div class="mini">FOUNDER / LAZARUS 001</div>
           <h2>The<span class="rogue">Rogue</span>Prince</h2>
@@ -310,16 +821,43 @@
       </div>
     </section>
 
+    <!-- CONNECT -->
     <section class="section connect" id="connect">
       <div class="connect-box">
         <div>
           <div class="eyebrow">05 / Join the wall</div>
           <h2>Got an idea?<br><span>Tell us something weird.</span></h2>
           <p>Share feedback, research leads, strange model behavior, or a security tool you think should exist. LaZarus is built in public.</p>
+          <div class="actions" style="margin-top:20px">
+            <a class="btn primary" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord ↗</a>
+          </div>
         </div>
-        <div class="actions" style="margin-top:0">
-          <a class="btn primary" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-          <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord ↗</a>
+        <div style="border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 350" width="100%" height="auto" style="display:block;">
+            <defs>
+              <filter id="wall-glow">
+                <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#54e9ff" flood-opacity="0.8"/>
+              </filter>
+              <filter id="pink-wall-glow">
+                <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ff4ca8" flood-opacity="0.8"/>
+              </filter>
+            </defs>
+            <rect width="700" height="350" fill="#0b0f17"/>
+            <g stroke="#161e2e" stroke-width="1">
+              <line x1="0" y1="70" x2="700" y2="70"/><line x1="0" y1="140" x2="700" y2="140"/><line x1="0" y1="210" x2="700" y2="210"/><line x1="0" y1="280" x2="700" y2="280"/>
+              <line x1="140" y1="0" x2="140" y2="350"/><line x1="280" y1="0" x2="280" y2="350"/><line x1="420" y1="0" x2="420" y2="350"/><line x1="560" y1="0" x2="560" y2="350"/>
+            </g>
+            <text x="40" y="60" fill="#62718a" font-family="monospace" font-size="14">&gt; MODEL.EVALUATE(WEIGHTS)</text>
+            <text x="40" y="85" fill="#ff4ca8" font-family="monospace" font-size="14" filter="url(#pink-wall-glow)">&gt;&gt; UNEXPECTED TOKEN DRIFT DETECTED</text>
+            <text x="40" y="110" fill="#62718a" font-family="monospace" font-size="14">&gt; EXPLOIT PAYLOAD: LOADED</text>
+            <circle cx="530" cy="90" r="18" fill="none" stroke="#ff4ca8" stroke-width="4" filter="url(#pink-wall-glow)"/>
+            <line x1="520" y1="80" x2="540" y2="100" stroke="#ff4ca8" stroke-width="3"/>
+            <line x1="540" y1="80" x2="520" y2="100" stroke="#ff4ca8" stroke-width="3"/>
+            <text x="210" y="240" fill="#54e9ff" font-family="'Impact', sans-serif" font-size="46" transform="rotate(-4 210 240)" filter="url(#wall-glow)">TELL US SOMETHING WEIRD</text>
+            <path d="M170,270 Q320,290 530,250" fill="none" stroke="#ff4ca8" stroke-width="5" stroke-linecap="round" stroke-dasharray="16 8"/>
+            <polygon points="620,190 625,205 640,210 625,215 620,230 615,215 600,210 615,205" fill="#c3ff61"/>
+          </svg>
         </div>
       </div>
     </section>
@@ -327,12 +865,14 @@
 
   <footer class="section footer">
     <div>LAZARUS // RESEARCHING</div>
-    <div class="links"><a href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord</a></div>
+    <div class="links">
+      <a href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord</a>
+    </div>
     <div>OPEN SOURCE / OPEN MINDS</div>
   </footer>
 
   <script>
-    // Small motion: slight parallax on the hero wall for a living-poster feel.
     const art = document.querySelector('.hero-art');
     window.addEventListener('pointermove', (e) => {
       if (window.innerWidth < 900) return;
