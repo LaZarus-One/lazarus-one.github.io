@@ -2,382 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0b0f17" />
-  <meta name="description" content="LaZarus — an open-source AI security research lab." />
-  <title>LaZarus // Researching</title>
-  <style>
-    :root{
-      --ink:#090b11;
-      --night:#0b0f17;
-      --panel:#101621;
-      --panel-2:#151a28;
-      --line:rgba(191,205,255,.14);
-      --text:#eef3ff;
-      --muted:#9ea8bd;
-      --cyan:#54e9ff;
-      --blue:#7ca7ff;
-      --violet:#7d59ff;
-      --purple:#6b2cff;
-      --magenta:#ff4ca8;
-      --pink:#ff6dcc;
-      --acid:#c3ff61;
-      --shadow:0 30px 90px rgba(0,0,0,.42);
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      color:var(--text);
-      background:
-        radial-gradient(circle at 80% 10%, rgba(125,89,255,.18), transparent 28%),
-        radial-gradient(circle at 15% 18%, rgba(84,233,255,.10), transparent 23%),
-        linear-gradient(180deg,#0a0e15 0%,#0d1220 46%,#0a0d14 100%);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      overflow-x:hidden;
-    }
-    a{color:inherit;text-decoration:none}
-    button,a{ -webkit-tap-highlight-color:transparent }
-    ::selection{background:rgba(125,89,255,.42);color:#fff}
-    body:before{
-      content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;z-index:20;
-      background-image:
-        repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0,rgba(255,255,255,.018) 1px,transparent 1px,transparent 3px),
-        repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 4px);
-      mix-blend-mode:soft-light;
-    }
-    .noise{position:fixed;inset:-20%;pointer-events:none;z-index:19;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");}
-    .site-header{
-      position:fixed;top:0;left:0;right:0;z-index:30;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:18px 28px;
-      background:linear-gradient(180deg,rgba(8,11,17,.88),rgba(8,11,17,.18));
-      backdrop-filter:blur(12px);
-    }
-    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.04em}
-    .brand svg{width:150px;height:38px;display:block}
-    .nav{display:flex;gap:24px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#c8d1e5}
-    .nav a{opacity:.78;transition:.2s}
-    .nav a:hover{opacity:1;color:#fff}
-    main{position:relative;z-index:2}
-    .section{width:min(1180px,calc(100% - 36px));margin:0 auto}
-    .hero{
-      min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:34px;
-      padding-top:110px;padding-bottom:70px;position:relative;isolation:isolate;
-    }
-    .hero:before{
-      content:"";position:absolute;inset:12% -7% 8% 28%;z-index:-2;
-      background:
-        radial-gradient(circle at 60% 45%,rgba(89,46,236,.55),transparent 36%),
-        radial-gradient(circle at 30% 45%,rgba(33,193,255,.24),transparent 30%),
-        radial-gradient(circle at 68% 70%,rgba(255,76,168,.20),transparent 24%);
-      filter:blur(28px);opacity:.92;
-    }
-    .hero-copy{position:relative;z-index:4;max-width:720px}
-    .status{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid rgba(175,195,255,.18);background:rgba(13,17,27,.68);backdrop-filter:blur(12px);font-size:.72rem;letter-spacing:.16em;font-weight:800;color:#dae2f4;border-radius:20px;}
-    .status i{display:block;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);animation:pulse 1.8s ease-in-out infinite}
-    @keyframes pulse{50%{transform:scale(.72);opacity:.55}}
-    h1{
-      margin:24px 0 18px;font-size:clamp(3.3rem,7.1vw,7.5rem);line-height:.86;letter-spacing:-.065em;font-weight:900;
-      max-width:800px;text-transform:uppercase;
-      text-shadow:0 16px 55px rgba(0,0,0,.34);
-    }
-    h1 .accent{color:var(--magenta);text-shadow:0 0 24px rgba(255,76,168,.17)}
-    .lede{max-width:680px;color:#b7c1d7;font-size:1.05rem;line-height:1.75}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-    .btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border:1px solid rgba(255,255,255,.14);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:.74rem;transition:.2s;position:relative;overflow:hidden;border-radius:10px;}
-    .btn.primary{background:linear-gradient(135deg,#fff 0%,#d9dcff 100%);color:#090c12}
-    .btn.primary:after{content:"";position:absolute;inset:-50% -20%;background:linear-gradient(110deg,transparent 42%,rgba(84,233,255,.45) 50%,transparent 58%);transform:translateX(-80%);transition:.5s}
-    .btn.primary:hover:after{transform:translateX(80%)}
-    .btn.ghost{background:rgba(15,18,29,.66);color:#eef3ff}
-    .btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.28)}
-    .meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;color:#8c97ad;font-size:.68rem;letter-spacing:.18em;font-weight:800}
-    .meta span{padding:6px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:6px;}
-    
-    /* ORIGINAL ASYMMETRIC / ANGULAR HERO ART PANEL */
-    .hero-art{min-height:640px;position:relative;transform:translateY(-16px)}
-    .orb{position:absolute;border-radius:50%;filter:blur(2px)}
-    .orb.a{width:440px;height:440px;right:2%;top:9%;background:radial-gradient(circle at 55% 45%,rgba(102,82,255,.8),rgba(48,31,152,.52) 32%,rgba(24,20,61,0) 68%);}
-    .orb.b{width:360px;height:360px;right:24%;top:36%;background:radial-gradient(circle at 48% 48%,rgba(69,226,255,.78),rgba(32,113,181,.28) 26%,transparent 67%);mix-blend-mode:screen}
-    .orb.c{width:280px;height:280px;right:-5%;bottom:7%;background:radial-gradient(circle,rgba(255,66,168,.48),transparent 68%);}
-    .splash{position:absolute;filter:drop-shadow(0 22px 50px rgba(0,0,0,.45));mix-blend-mode:screen}
-    .splash.one{right:0;top:9%;width:500px;height:270px;background:linear-gradient(125deg,transparent 8%,rgba(116,75,255,.9) 9% 20%,transparent 21%),linear-gradient(130deg,transparent 28%,rgba(74,220,255,.78) 29% 32%,transparent 33%),linear-gradient(65deg,transparent 44%,rgba(255,76,168,.72) 45% 48%,transparent 49%);clip-path:polygon(0 55%,12% 36%,22% 47%,31% 18%,40% 50%,55% 10%,67% 38%,76% 12%,100% 25%,87% 49%,100% 70%,75% 63%,61% 88%,45% 64%,33% 91%,18% 65%,4% 77%)}
-    .splash.two{right:17%;bottom:6%;width:410px;height:220px;background:radial-gradient(ellipse at 35% 50%,rgba(72,238,255,.62),transparent 29%),radial-gradient(ellipse at 67% 50%,rgba(154,87,255,.66),transparent 30%),linear-gradient(115deg,transparent 28%,rgba(255,80,171,.45) 29% 35%,transparent 36%);filter:blur(.4px)}
-    .brush{position:absolute;height:28px;transform:rotate(-10deg);opacity:.75;mix-blend-mode:screen;background:linear-gradient(90deg,transparent 0%,rgba(90,231,255,.15) 6%,rgba(90,231,255,.7) 26%,rgba(119,88,255,.75) 54%,rgba(255,83,176,.3) 78%,transparent 100%);filter:blur(1px);clip-path:polygon(0 35%,13% 15%,38% 24%,56% 8%,76% 21%,100% 45%,83% 72%,61% 59%,37% 77%,16% 60%,0 82%)}
-    .brush.b1{right:5%;top:54%;width:470px}
-    .brush.b2{right:22%;top:72%;width:330px;transform:rotate(12deg);opacity:.52}
-    
-    .panel-art{
-      position:absolute;
-      right:7%;
-      top:18%;
-      width:430px;
-      height:510px;
-      border:1px solid rgba(221,231,255,.14);
-      background:linear-gradient(160deg,rgba(16,22,37,.62),rgba(8,11,20,.78));
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(10px);
-      overflow:hidden;
-      clip-path:polygon(3% 1%, 97% 0%, 100% 97%, 78% 100%, 53% 95%, 22% 99%, 0% 88%, 2% 20%);
-    }
-    .panel-art:before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(165deg,transparent 33%,rgba(84,233,255,.05) 34% 43%,transparent 44%),
-                 linear-gradient(20deg,transparent 44%,rgba(126,89,255,.11) 45% 52%,transparent 53%);
-      pointer-events:none;
-      z-index:2;
-    }
-    .panel-svg-bg{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      pointer-events:none;
-      z-index:1;
-      opacity:0.95;
-    }
-    .micro{position:absolute;z-index:5;padding:6px 10px;font:700 .62rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.15em;color:#b8c4da;background:rgba(8,11,16,.85);border:1px solid rgba(255,255,255,.12);text-transform:uppercase;border-radius:4px;backdrop-filter:blur(4px);}
-    .micro.two{left:24px;top:26px;color:var(--cyan);border-color:rgba(84,233,255,.3)}
-    .micro.three{left:22px;bottom:26px;color:var(--pink);border-color:rgba(255,76,168,.3)}
-    .scribble{position:absolute;z-index:5;left:24px;bottom:68px;font-size:1rem;line-height:1.15;font-weight:900;text-transform:uppercase;transform:rotate(-7deg);color:#eef3ff;text-shadow:2px 2px 0 #7d59ff,-1px -1px 0 #54e9ff}
-    .tag{position:absolute;z-index:5;right:22px;bottom:20px;font-size:3rem;font-weight:900;letter-spacing:-.09em;transform:rotate(-7deg);color:#bdaeff;text-shadow:2px 2px 0 #ff4ca8,-3px -2px 0 #54e9ff;opacity:.88}
-
-    .spray-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px rgba(255,76,168,.9)}
-    .d1{right:18%;top:17%}.d2{right:13%;top:29%;width:3px;height:3px}.d3{right:25%;top:12%;width:4px;height:4px;background:var(--cyan)}.d4{right:34%;bottom:22%;width:3px;height:3px;background:var(--violet)}
-
-    .section-block{padding:110px 0}
-    .eyebrow{font-size:.7rem;letter-spacing:.18em;font-weight:900;color:#8f9bb0;text-transform:uppercase}
-    .split{display:grid;grid-template-columns:1fr 1.35fr;gap:56px;align-items:start}
-    .split h2{margin:14px 0 0;font-size:clamp(2.2rem,5vw,5.2rem);line-height:.9;letter-spacing:-.05em;text-transform:uppercase}
-    .split h2 em{font-style:normal;color:var(--cyan)}
-    .copy{color:#b3bed0;font-size:1.03rem;line-height:1.8;max-width:730px}
-    .quote{margin-top:28px;padding-left:18px;border-left:3px solid var(--magenta);font-size:1.05rem;line-height:1.6;color:#dbe3f2}
-    
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
-    .card{
-      min-height:360px;
-      padding:24px;
-      position:relative;
-      overflow:hidden;
-      border:1px solid rgba(210,225,255,.11);
-      background:linear-gradient(150deg,rgba(22,28,43,.92),rgba(10,14,22,.92));
-      box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      border-radius:var(--radius);
-    }
-    .card:before{content:"";position:absolute;inset:-30% -10%;background:radial-gradient(circle at 65% 35%,rgba(84,233,255,.18),transparent 28%),radial-gradient(circle at 35% 76%,rgba(125,89,255,.2),transparent 27%);transform:rotate(-7deg);z-index:0}
-    .card.accent:before{background:radial-gradient(circle at 70% 32%,rgba(255,76,168,.24),transparent 26%),radial-gradient(circle at 25% 70%,rgba(125,89,255,.18),transparent 28%)}
-    .card>*{position:relative;z-index:1}
-    .card .num{align-self:flex-end;font:800 .7rem ui-monospace,monospace;letter-spacing:.14em;color:#8190a8}
-    .card h3{margin:14px 0 8px;font-size:1.55rem;line-height:1;text-transform:uppercase;letter-spacing:-.035em}
-    .card p{margin:0;color:#aab4c7;line-height:1.65;font-size:.94rem}
-    .card .label{margin-top:16px;font:900 .64rem ui-monospace,monospace;letter-spacing:.18em;color:var(--cyan)}
-    .card.accent .label{color:var(--pink)}
-    .card-art-box{margin:16px 0 10px; border-radius:10px; overflow:hidden;}
-    
-    /* PROJECTS CONTAINER */
-    .project{
-      position:relative;
-      margin-top:38px;
-      border:1px solid rgba(224,234,255,.1);
-      background:linear-gradient(155deg,rgba(18,24,38,.96),rgba(8,11,17,.96));
-      min-height:380px;
-      overflow:hidden;
-      box-shadow:var(--shadow);
-      border-radius:var(--radius);
-    }
-    .project:before{content:"";position:absolute;inset:0;background:linear-gradient(128deg,transparent 40%,rgba(84,233,255,.06) 41% 44%,transparent 45%),linear-gradient(18deg,transparent 22%,rgba(255,76,168,.06) 23% 31%,transparent 32%)}
-    .project-inner{position:relative;padding:34px;display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;min-height:380px}
-    .stamp{display:inline-block;padding:7px 12px;border:1px solid rgba(255,76,168,.36);color:var(--pink);font:900 .62rem ui-monospace,monospace;letter-spacing:.16em;transform:rotate(-3deg);background:rgba(255,76,168,.05);border-radius:6px;}
-    .project h2{margin:20px 0 8px;font-size:clamp(2.6rem,5vw,5.2rem);letter-spacing:-.06em;line-height:.88;text-transform:uppercase}
-    .project h2 span{color:var(--cyan)}
-    .project p{color:#aeb8ca;max-width:54ch;line-height:1.75}
-    .specs{width:100%;border-left:1px solid rgba(255,255,255,.1);padding-left:20px;margin-top:16px;}
-    .spec{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.09);font-size:.74rem;text-transform:uppercase;letter-spacing:.12em}
-    .spec b{color:#e4eaff}.spec span{color:#7d8ba4;text-align:right}
-
-    /* PROJECT WORKSTATION & HAMMER HIT */
-    .project-workstation{
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      position:relative;
-      background:rgba(10,14,22,.65);
-      padding:24px;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;
-      box-shadow:inset 0 0 30px rgba(0,0,0,.45);
-    }
-    .terminal-progress-wrap{
-      background:#070a0f;
-      border:1px solid rgba(255,255,255,.1);
-      padding:14px;
-      border-radius:8px;
-      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    }
-    .term-meta{
-      display:flex;
-      justify-content:space-between;
-      font-size:.7rem;
-      color:#9aa7bd;
-      margin-bottom:8px;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-    }
-    .term-bar-container{
-      height:16px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:4px;
-      overflow:hidden;
-      position:relative;
-    }
-    .term-bar-fill{
-      height:100%;
-      width:68%;
-      background:linear-gradient(90deg, #ff4ca8 0%, #7d59ff 45%, #54e9ff 80%, #c3ff61 100%);
-      box-shadow:0 0 16px rgba(195,255,97,.65);
-      position:relative;
-      animation:pulse-progress 3.2s ease-in-out infinite alternate;
-    }
-    @keyframes pulse-progress{
-      0%{width:62%; filter:brightness(0.9);}
-      100%{width:74%; filter:brightness(1.15);}
-    }
-    .term-blocks{
-      position:absolute;
-      inset:0;
-      background-image:linear-gradient(90deg, transparent 8px, #070a0f 8px, #070a0f 11px);
-      background-size:11px 100%;
-      mix-blend-mode:multiply;
-      pointer-events:none;
-    }
-
-    .hammer-box{
-      width:100%;
-      height:160px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .hammer-svg{
-      width:100%;
-      height:100%;
-      overflow:visible;
-    }
-    .hammer-pivot{
-      transform-origin: 320px 100px;
-      animation: hammer-hit 1.25s cubic-bezier(0.3, 0, 0.2, 1) infinite;
-    }
-    @keyframes hammer-hit{
-      0% { transform: rotate(-38deg); }
-      50% { transform: rotate(-44deg); }
-      75% { transform: rotate(14deg); }
-      82% { transform: rotate(8deg); }
-      100% { transform: rotate(-38deg); }
-    }
-    .spark-burst{
-      transform-origin: 215px 125px;
-      animation: sparks-fire 1.25s cubic-bezier(0.3, 0, 0.2, 1) infinite;
-    }
-    @keyframes sparks-fire{
-      0%, 72% { opacity: 0; transform: scale(0.3); }
-      75% { opacity: 1; transform: scale(1.3); }
-      90% { opacity: 0; transform: scale(1.6); }
-      100% { opacity: 0; }
-    }
-    .anvil-vibe{
-      animation: anvil-shake 1.25s cubic-bezier(0.3, 0, 0.2, 1) infinite;
-    }
-    @keyframes anvil-shake{
-      0%, 74% { transform: translate(0, 0); }
-      75% { transform: translate(-2px, 3px); }
-      82% { transform: translate(2px, -1px); }
-      90% { transform: translate(0, 0); }
-    }
-    
-    .founder{display:grid;grid-template-columns:.8fr 1.2fr;gap:30px;align-items:stretch}
-    .founder-art,.founder-copy{
-      border:1px solid rgba(210,225,255,.1);
-      background:linear-gradient(145deg,rgba(19,24,39,.9),rgba(9,12,19,.95));
-      min-height:430px;
-      position:relative;
-      overflow:hidden;
-      box-shadow:var(--shadow);
-      border-radius:var(--radius);
-    }
-    .founder-art{padding:0;display:flex;align-items:center;justify-content:center}
-    .founder-copy{padding:36px;display:flex;flex-direction:column;justify-content:end}
-    .founder-copy .mini{font:900 .64rem ui-monospace,monospace;letter-spacing:.17em;color:#8290aa}
-    .founder-copy h2{margin:14px 0 12px;font-size:clamp(2.3rem,5vw,5rem);line-height:.9;letter-spacing:-.06em;text-transform:none}
-    .founder-copy h2 .rogue{color:var(--magenta);text-shadow:0 0 30px rgba(255,76,168,.16)}
-    .founder-copy p{color:#aeb8c9;line-height:1.8;max-width:50ch}
-    .signature{margin-top:22px;font:900 .76rem ui-monospace,monospace;letter-spacing:.14em;color:#9aa7bd}
-    
-    .connect{padding:100px 0 130px}
-    .connect-box{
-      border:1px solid rgba(223,233,255,.1);
-      padding:42px;
-      background:linear-gradient(135deg,rgba(16,22,36,.96),rgba(10,13,20,.98));
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:34px;
-      align-items:center;
-      position:relative;
-      overflow:hidden;
-      border-radius:var(--radius);
-    }
-    .connect-box:before{content:"";position:absolute;inset:-30%;background:linear-gradient(110deg,transparent 36%,rgba(84,233,255,.05) 37% 46%,transparent 47%),linear-gradient(70deg,transparent 48%,rgba(125,89,255,.08) 49% 61%,transparent 62%);transform:rotate(-6deg)}
-    .connect-box>*{position:relative}
-    .connect-box h2{margin:10px 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.92;letter-spacing:-.06em;text-transform:uppercase}
-    .connect-box h2 span{color:var(--magenta)}
-    .connect-box p{color:#aeb8ca;max-width:58ch;line-height:1.75}
-    .footer{padding:0 0 28px;display:flex;justify-content:space-between;gap:16px;align-items:center;color:#7e8ca2;font:700 .66rem ui-monospace,monospace;letter-spacing:.13em;text-transform:uppercase}
-    .footer .links{display:flex;gap:18px}.footer a:hover{color:#fff}
-    
-    @media (max-width: 960px){
-      .nav{display:none}
-      .hero{grid-template-columns:1fr;padding-top:120px}
-      .hero-art{min-height:540px;margin-top:-10px}
-      .panel-art{right:5%;width:380px;height:490px}
-      .split{grid-template-columns:1fr;gap:22px}
-      .cards{grid-template-columns:1fr}
-      .project-inner{grid-template-columns:1fr}
-      .specs{border-left:none;padding-left:0}
-      .founder{grid-template-columns:1fr}
-      .connect-box{grid-template-columns:1fr}
-    }
-    @media (max-width: 600px){
-      .site-header{padding:14px 16px}
-      .brand svg{width:126px}
-      .section{width:min(100% - 26px,1180px)}
-      h1{font-size:clamp(3.05rem,17vw,5.1rem)}
-      .hero{padding-bottom:25px}
-      .hero-art{min-height:430px}
-      .panel-art{right:0;top:15%;width:100%;height:390px}
-      .micro.two{right:auto;left:18px}
-      .scribble{font-size:.8rem}
-      .tag{font-size:2.2rem}
-      .section-block{padding:76px 0}
-      .card{min-height:300px}
-      .card h3{margin-top:14px}
-      .project-inner{padding:24px}
-      .project{min-height:0}
-      .project h2{font-size:3.2rem}
-      .connect{padding:78px 0 92px}
-      .connect-box{padding:26px}
-      .footer{padding-bottom:20px;flex-direction:column;align-items:flex-start}
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080a0f" />
+  <meta name="description" content="LaZarus — an open-source AI security research lab. Open-Source AI Security Research Lab." />
+  <title>LaZarus // AI Security Lab & Red-Team Platform</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Atmospheric Noise Overlay -->
   <div class="noise"></div>
+
+  <!-- Background Cinematic Video & Particle Canvas -->
+  <div class="video-canvas-backdrop">
+    <video class="bg-video" autoplay loop muted playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' fill='%23080a0f'/%3E">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-technology-digital-grid-background-41484-large.mp4" type="video/mp4" />
+    </video>
+    <div class="bg-video-overlay"></div>
+    <canvas id="particleCanvas"></canvas>
+  </div>
+
+  <!-- Tactical HUD Top Bar -->
+  <div class="tactical-hud-bar">
+    <div class="hud-left">
+      <span class="hud-live-dot"></span>
+      <span>SYS_LINK: <b class="hud-tag">ONLINE</b></span>
+      <span>CLUSTER: <b>ALPHA-01</b></span>
+    </div>
+    <div class="hud-center">
+      <span>LAZARUS TACTICAL PROTOCOL // AI DEFENSE SENTINEL</span>
+    </div>
+    <div class="hud-right">
+      <span id="hudTime">00:00:00 UTC</span>
+      <span>PING: <b id="hudPing" style="color:var(--acid);">21ms</b></span>
+      <button class="sfx-toggle-btn" id="sfxToggleBtn" title="Toggle Tactical Audio Effects">
+        <span>SFX: [OFF]</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
   <header class="site-header">
     <a class="brand" href="#top" aria-label="LaZarus home">
       <svg viewBox="0 0 340 86" role="img" aria-label="LaZarus">
@@ -393,6 +56,7 @@
     </a>
     <nav class="nav" aria-label="Main navigation">
       <a href="#focus">Focus</a>
+      <a href="#simulator">Live Sandbox</a>
       <a href="#projects">Projects</a>
       <a href="#founder">Founder</a>
       <a href="#connect">Connect</a>
@@ -403,21 +67,35 @@
     <!-- HERO SECTION WITH ASYMMETRIC CLIP-PATH CONTAINER & VECTOR ARTWORK -->
     <section class="section hero">
       <div class="hero-copy">
-        <div class="status"><i></i> LAZARUS // RESEARCHING</div>
+        <div class="status-badge-wrap">
+          <div class="status"><i></i> LAZARUS // RESEARCHING</div>
+          <span class="status-tag-mini">SENTINEL PROTOCOL // VER 2.4</span>
+        </div>
         <h1>Figuring out how to <span class="accent">hack you</span>, just so you don't get hacked by someone else.</h1>
         <p class="lede">LaZarus is a small open-source research lab exploring AI security, red teaming, and practical ways to use models to understand and defend other models.</p>
         <div class="actions">
-          <a class="btn primary" href="#projects">Explore Projects ↘</a>
-          <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Join the Discord ↗</a>
+          <a class="btn primary" href="#simulator">Live Sandbox ⚡</a>
+          <a class="btn ghost" href="#projects">Explore Projects ↘</a>
+          <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Join Discord ↗</a>
         </div>
-        <div class="meta"><span>OPEN SOURCE</span><span>AI SECURITY</span><span>RED TEAMING</span></div>
+        <div class="meta">
+          <span>OPEN SOURCE</span>
+          <span>AI SECURITY</span>
+          <span>RED TEAMING</span>
+          <span>AUTONOMOUS SENTINELS</span>
+        </div>
       </div>
+
       <div class="hero-art" aria-hidden="true">
-        <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
-        <div class="splash one"></div><div class="splash two"></div>
-        <div class="brush b1"></div><div class="brush b2"></div>
-        
-        <!-- RESTORED ORIGINAL ANGULAR POLYGON SHAPE -->
+        <div class="orb a"></div>
+        <div class="orb b"></div>
+        <div class="orb c"></div>
+        <div class="splash one"></div>
+        <div class="splash two"></div>
+        <div class="brush b1"></div>
+        <div class="brush b2"></div>
+
+        <!-- RESTORED ORIGINAL ANGULAR POLYGON SHAPE WITH HEXTECH AURA -->
         <div class="panel-art">
           <svg class="panel-svg-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 900" preserveAspectRatio="xMidYMid slice">
             <defs>
@@ -441,10 +119,8 @@
                 <stop offset="100%" stop-color="#3d0e23"/>
               </linearGradient>
             </defs>
-
             <rect width="700" height="900" fill="#080a0f"/>
             <rect width="700" height="900" fill="url(#bg-vignette)"/>
-
             <!-- Forensic Grid Lines -->
             <g stroke="rgba(255,76,168,0.06)" stroke-width="1.2">
               <line x1="0" y1="200" x2="700" y2="200"/>
@@ -455,7 +131,6 @@
               <line x1="350" y1="0" x2="350" y2="900"/>
               <line x1="520" y1="0" x2="520" y2="900"/>
             </g>
-
             <!-- Barbed Vines -->
             <g stroke="#ff4ca8" stroke-width="4.5" stroke-linecap="round" fill="none" filter="url(#magenta-glow)">
               <path d="M90,120 Q80,180 110,240"/>
@@ -467,7 +142,6 @@
               <line x1="595" y1="175" x2="615" y2="190"/>
               <line x1="620" y1="215" x2="595" y2="230"/>
             </g>
-
             <!-- Scales of Evaluation -->
             <g id="scales">
               <circle cx="210" cy="330" r="14" fill="none" stroke="#54e9ff" stroke-width="3" filter="url(#cyan-glow)"/>
@@ -490,7 +164,6 @@
                 <circle cx="280" cy="460" r="3.5" fill="#54e9ff"/>
               </g>
             </g>
-
             <!-- Figure & Robes -->
             <g id="figure">
               <path d="M300,430 L220,720 L245,670 L275,755 L310,690 L340,770 L400,690 L450,780 L480,695 L520,760 L440,420 Z" fill="#330d22" stroke="#781d49" stroke-width="2.5" stroke-linejoin="round"/>
@@ -526,7 +199,6 @@
                 <path d="M392,245 Q407,230 402,215 Q387,225 392,245 Z"/>
               </g>
             </g>
-
             <!-- Executioner Sword -->
             <g id="sword">
               <path d="M410,390 L460,490 L480,480" fill="none" stroke="#baa4aa" stroke-width="12" stroke-linecap="round"/>
@@ -538,7 +210,6 @@
               <line x1="472" y1="535" x2="480" y2="730" stroke="#eef3ff" stroke-width="1.8" stroke-dasharray="12 6"/>
               <path d="M488,775 Q494,805 491,818" fill="none" stroke="#ff4ca8" stroke-width="3" stroke-linecap="round" filter="url(#magenta-glow)"/>
             </g>
-
             <!-- Top Brush Rebrand Typography -->
             <g id="typography">
               <circle cx="560" cy="54" r="5" fill="#ff4ca8" filter="url(#magenta-glow)"/>
@@ -555,15 +226,15 @@
               <path d="M190,172 Q350,158 560,166" fill="none" stroke="#54e9ff" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="14 8" filter="url(#cyan-glow)"/>
             </g>
           </svg>
-
-          <!-- BADGES (FIELD NOTE REMOVED, AI/SEC SHIFTED TO CORNER) -->
           <div class="micro two">AI / SEC</div>
           <div class="micro three">NOT MAGIC // YET</div>
           <div class="scribble">break it.<br>learn it.<br>secure it.</div>
           <div class="tag">LZRS</div>
         </div>
-
-        <span class="spray-dot d1"></span><span class="spray-dot d2"></span><span class="spray-dot d3"></span><span class="spray-dot d4"></span>
+        <span class="spray-dot d1"></span>
+        <span class="spray-dot d2"></span>
+        <span class="spray-dot d3"></span>
+        <span class="spray-dot d4"></span>
       </div>
     </section>
 
@@ -703,6 +374,53 @@
           <div class="label">// DEFEND</div>
         </article>
       </div>
+
+      <!-- INTERACTIVE AI RED-TEAM DEFENSE SANDBOX -->
+      <div class="simulator-section" id="simulator">
+        <div class="sim-header">
+          <div class="sim-title">
+            <h3><span>// 02.B</span> AI RED-TEAM DEFENSE SANDBOX</h3>
+            <p>Interactive threat vector simulation against autonomous model sentinels.</p>
+          </div>
+          <div class="sim-telemetry-pills">
+            <span class="sim-pill">STATUS: <b style="color:var(--acid);">STANDBY</b></span>
+            <span class="sim-pill">MODEL: <b>SENTINEL-v2</b></span>
+            <span class="sim-pill">SHIELD: <b style="color:var(--cyan);">100%</b></span>
+          </div>
+        </div>
+
+        <div class="sim-grid">
+          <!-- Left: Attack Vector Selector -->
+          <div class="sim-controls">
+            <div class="sim-label">// SELECT RED-TEAM EXPLOIT VECTOR</div>
+            <div class="attack-vector-list" id="attackVectorList"></div>
+            <div class="sim-run-actions">
+              <button class="btn accent-red" id="runSimBtn">Fire Exploit Vector ⚡</button>
+              <button class="btn ghost" id="resetSimBtn">Clear / Reset</button>
+            </div>
+          </div>
+
+          <!-- Right: Visualizer & Live Terminal -->
+          <div class="sim-display">
+            <div class="sim-canvas-box">
+              <canvas id="simGraphCanvas"></canvas>
+            </div>
+            <div class="sim-terminal" id="simTerminal">
+              <div class="terminal-top-bar">
+                <span>TERMINAL_OUTPUT // ACTIVE_STREAM</span>
+                <span>LEVEL: VERBOSE</span>
+              </div>
+              <div class="terminal-logs" id="terminalLogs">
+                <div class="log-entry info">
+                  <span class="log-prompt">[SYS_INIT]</span>
+                  <span>Sentinel defense array initialized. Awaiting vector selection...</span>
+                </div>
+              </div>
+              <span class="terminal-cursor"></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- PROJECTS -->
@@ -714,8 +432,7 @@
             <div class="stamp">NO RELEASES YET</div>
             <h2>First experiment:<br><span>in progress.</span></h2>
             <p>We don't have a flagship tool to fake. This section is ready for the first real release — with a GitHub link, project notes, research scope, and the people behind it.</p>
-            <a class="btn ghost" style="margin-top:18px" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">Open LaZarus on GitHub ↗</a>
-            
+            <a class="btn ghost" style="margin-top:20px" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">Open LaZarus on GitHub ↗</a>
             <div class="specs">
               <div class="spec"><b>STATUS</b><span>RESEARCHING</span></div>
               <div class="spec"><b>MODEL</b><span>EXPERIMENTAL</span></div>
@@ -726,7 +443,7 @@
 
           <!-- ANIMATED HAMMER + TERMINAL WORKBENCH -->
           <div class="project-workstation">
-            <div class="hammer-box">
+            <div class="hammer-box" id="hammerBox" title="Click to strike anvil!">
               <svg class="hammer-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <filter id="impact-glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -736,25 +453,21 @@
                     <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#c3ff61" flood-opacity="1"/>
                   </filter>
                 </defs>
-
                 <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
                   <line x1="60" y1="180" x2="340" y2="180"/>
                   <line x1="60" y1="140" x2="340" y2="140"/>
                 </g>
-
                 <g class="anvil-vibe">
                   <polygon points="175,135 245,135 235,175 185,175" fill="#131a28" stroke="#54e9ff" stroke-width="2"/>
                   <line x1="170" y1="135" x2="250" y2="135" stroke="#ff4ca8" stroke-width="4" stroke-linecap="round" filter="url(#impact-glow)"/>
                   <text x="188" y="160" fill="#60718d" font-family="monospace" font-size="9" letter-spacing="1">TARGET</text>
                 </g>
-
                 <g class="spark-burst">
                   <path d="M210,132 L185,115 M210,132 L235,115 M210,132 L175,130 M210,132 L245,128 M210,132 L200,95 M210,132 L225,95" stroke="#c3ff61" stroke-width="3" stroke-linecap="round" filter="url(#spark-glow)"/>
                   <circle cx="180" cy="110" r="3" fill="#ff4ca8" filter="url(#impact-glow)"/>
                   <circle cx="240" cy="110" r="2.5" fill="#54e9ff"/>
                   <circle cx="210" cy="90" r="3.5" fill="#c3ff61" filter="url(#spark-glow)"/>
                 </g>
-
                 <g class="hammer-pivot">
                   <rect x="200" y="93" width="130" height="12" rx="4" fill="#0d1422" stroke="#2a374e" stroke-width="2"/>
                   <line x1="220" y1="99" x2="310" y2="99" stroke="#7d59ff" stroke-width="3" stroke-dasharray="8 4"/>
@@ -766,7 +479,6 @@
                 </g>
               </svg>
             </div>
-
             <div class="terminal-progress-wrap">
               <div class="term-meta">
                 <span>&gt; LAB_BUILD_STATUS: COMPILING</span>
@@ -789,7 +501,7 @@
     <!-- FOUNDER -->
     <section class="section section-block" id="founder">
       <div class="eyebrow">04 / Founding signal</div>
-      <div class="founder" style="margin-top:22px">
+      <div class="founder" style="margin-top:24px">
         <div class="founder-art">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
             <defs>
@@ -828,7 +540,7 @@
           <div class="eyebrow">05 / Join the wall</div>
           <h2>Got an idea?<br><span>Tell us something weird.</span></h2>
           <p>Share feedback, research leads, strange model behavior, or a security tool you think should exist. LaZarus is built in public.</p>
-          <div class="actions" style="margin-top:20px">
+          <div class="actions" style="margin-top:24px">
             <a class="btn primary" href="https://github.com/LaZarus-One" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
             <a class="btn ghost" href="https://discord.gg/XuG5HMPeD" target="_blank" rel="noopener noreferrer">Discord ↗</a>
           </div>
@@ -872,14 +584,6 @@
     <div>OPEN SOURCE / OPEN MINDS</div>
   </footer>
 
-  <script>
-    const art = document.querySelector('.hero-art');
-    window.addEventListener('pointermove', (e) => {
-      if (window.innerWidth < 900) return;
-      const x = (e.clientX / window.innerWidth - .5) * 10;
-      const y = (e.clientY / window.innerHeight - .5) * 8;
-      art.style.transform = `translate(${x}px, ${y - 16}px)`;
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
