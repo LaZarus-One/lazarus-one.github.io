@@ -1,0 +1,45 @@
+<section class="card">
+  <p>Raw machine code cannot simply be dumped onto a disk and executed. The operating system loader needs a structured container specifying memory layouts, permissions, imported dynamic libraries, symbol tables, and the initial execution entry point.</p>
+  <p>In cybersecurity and malware analysis, you will encounter two primary binary formats:</p>
+  <div class="switches">
+    <div class="switch on"><span class="icon fill">terminal</span><code>ELF</code><b>Linux / Unix / Android</b></div>
+    <div class="switch on"><span class="icon fill">desktop_windows</span><code>PE / PE32+</code><b>Windows Executables & DLLs</b></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Magic Signatures & Headers</h2>
+  <p>The first few bytes of any file define its file signature (magic bytes). Analyzers and loaders check these before inspecting headers:</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Format</th><th scope="col">Offset</th><th scope="col">Magic Hex</th><th scope="col">ASCII Representation</th><th scope="col">Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">ELF</th><td>0x00</td><td><code>7F 45 4C 46</code></td><td><code>.ELF</code></td><td>Executable and Linkable Format</td></tr>
+        <tr><th scope="row">PE (DOS)</th><td>0x00</td><td><code>4D 5A</code></td><td><code>MZ</code></td><td>DOS Stub (Mark Zbikowski legacy header)</td></tr>
+        <tr><th scope="row">PE (NT)</th><td>e_lfanew</td><td><code>50 45 00 00</code></td><td><code>PE\0\0</code></td><td>Portable Executable Signature</td></tr>
+        <tr><th scope="row">Mach-O</th><td>0x00</td><td><code>CF FA ED FE</code></td><td><code>\xcf\xfa\xed\xfe</code></td><td>macOS 64-bit binary (Feedface)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">visibility</span>
+  <div><b>Segments vs Sections:</b> In an ELF binary, <b>Sections</b> (like <code>.text</code>, <code>.data</code>, <code>.rodata</code>) exist for the compiler, linker, and reverse engineer. <b>Segments</b> (defined in Program Headers, like <code>PT_LOAD</code>) exist for the OS kernel loader, defining whether memory is mapped Read (R), Write (W), or Execute (X). Striping section headers does not prevent execution, but it strips disassembler clues!</div>
+</aside>
+
+<section class="card">
+  <h2>The Dynamic Resolution Engine: PLT and GOT</h2>
+  <p>Binaries rarely bundle all library code inside themselves. They dynamically link against shared libraries (like <code>libc.so.6</code> or <code>kernel32.dll</code>):</p>
+  <ol class="units">
+    <li><b>PLT (Procedure Linkage Table):</b> A jump table located in <code>.plt</code>. Each entry consists of small stub instructions that jump to an address read from the GOT.</li>
+    <li><b>GOT (Global Offset Table):</b> An array of absolute pointers stored in writable memory (<code>.got.plt</code>).</li>
+    <li><b>Lazy Binding:</b> The first time <code>printf()</code> is called, the GOT entry points back to the dynamic linker (`_dl_runtime_resolve`). The linker looks up the real libc address in memory, writes it into the GOT, and executes it. Subsequent calls jump straight through the GOT with zero overhead!</li>
+  </ol>
+</section>
+
+<div class="challenge-slot"></div>
+

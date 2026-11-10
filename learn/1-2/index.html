@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2 Registers, Privilege Rings &amp; State Transitions · Lazarus</title>
+<meta name="description" content="Master low-level machine execution, CPU internals, binary analysis, and reverse engineering from an offensive security perspective. 100% free and open source.">
+<link rel="canonical" href="https://lazarus-one.github.io/learn/1-2">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lazarus">
+<meta property="og:url" content="https://lazarus-one.github.io/learn/1-2">
+<meta property="og:title" content="Lazarus: Machine Execution & Reverse Engineering">
+<meta property="og:description" content="Master low-level machine execution, CPU internals, binary analysis, and reverse engineering from an offensive security perspective.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lazarus: Machine Execution & Reverse Engineering">
+<meta name="twitter:description" content="Master low-level machine execution, CPU internals, binary analysis, and reverse engineering from an offensive security perspective.">
+<meta name="theme-color" content="#f8fafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131314" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Google+Sans+Code:wght@400..600&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../app.css">
+<script>
+  // Apply saved theme immediately before paint to prevent flashing
+  try {
+    const t = localStorage.getItem("lazarus:theme");
+    if (t) document.documentElement.dataset.theme = t;
+  } catch {}
+</script>
+<script type="module" src="../../app.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a href="./" class="brand" data-link>Lazarus</a>
+    <button class="icon-btn theme" type="button" aria-label="Switch theme" title="Switch theme"><span class="icon">dark_mode</span></button>
+    <a class="icon-btn" href="https://github.com/lazarus-one" target="_blank" rel="noopener" aria-label="GitHub Profile" title="GitHub Profile">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+    </a>
+  </div>
+</header>
+
+<main id="app" class="wrap" tabindex="-1" data-prerendered><div class="page">
+          <header class="page-header">
+            <div class="chips">
+              <a class="chip" href="../../" data-link><span class="icon">arrow_back</span>Lazarus</a>
+              <span class="chip">Chapter 1: Machine Execution &amp; Hardware Architecture</span>
+            </div>
+            <h1><span class="topic-num">1.2</span> Registers, Privilege Rings &amp; State Transitions</h1>
+          </header>
+          <article class="lesson"><section class="card">
+  <p>Registers are tiny, ultra-high-speed memory cells embedded directly inside the CPU core. Accessing RAM takes roughly 50 to 100 nanoseconds; reading a register takes less than a single nanosecond (a single clock cycle). Because memory is comparatively slow, machine execution happens almost exclusively inside CPU registers.</p>
+  <p>On x86_64 architectures, you have 16 general-purpose 64-bit registers: <code>RAX</code>, <code>RBX</code>, <code>RCX</code>, <code>RDX</code>, <code>RSI</code>, <code>RDI</code>, <code>RBP</code>, <code>RSP</code>, and <code>R8</code> through <code>R15</code>.</p>
+</section>
+
+<section class="card">
+  <h2>Register Anatomy & The 32-bit Zero-Extension Trap</h2>
+  <p>To preserve backward compatibility with 32-bit and 16-bit x86 software, x86_64 allows you to address sub-slices of the primary registers:</p>
+  
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Register</th><th scope="col">Width</th><th scope="col">Bits Covered</th><th scope="col">Historical / Primary Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>RAX</code></th><td>64-bit</td><td>[63:0]</td><td>Accumulator, Function return values, Syscall numbers</td></tr>
+        <tr><th scope="row"><code>EAX</code></th><td>32-bit</td><td>[31:0]</td><td>Lower 32 bits of RAX (zero-extends upper 32 bits!)</td></tr>
+        <tr><th scope="row"><code>AX</code></th><td>16-bit</td><td>[15:0]</td><td>Lower 16 bits of RAX</td></tr>
+        <tr><th scope="row"><code>AH</code> / <code>AL</code></th><td>8-bit</td><td>[15:8] / [7:0]</td><td>High byte / Low byte of AX</td></tr>
+        <tr><th scope="row"><code>RSP</code></th><td>64-bit</td><td>[63:0]</td><td>Stack Pointer (always points to top of stack)</td></tr>
+        <tr><th scope="row"><code>RBP</code></th><td>64-bit</td><td>[63:0]</td><td>Base Frame Pointer (anchors the active function frame)</td></tr>
+        <tr><th scope="row"><code>RIP</code></th><td>64-bit</td><td>[63:0]</td><td>Instruction Pointer (address of next instruction to execute)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">warning</span>
+  <div><b>The Golden Rule of x86_64 Zero Extension:</b> Writing to an 8-bit or 16-bit sub-register (like <code>AL</code> or <code>AX</code>) leaves the rest of <code>RAX</code> unchanged. However, writing to any 32-bit register (like <code>EAX</code>) <b>automatically clears all upper 32 bits of RAX to zeroes</b>. Vulnerability researchers exploit this behavior to clear register clobbering when constructing shellcode and ROP chains!</div>
+</aside>
+
+<section class="card">
+  <h2>Interactive Register Slicer & Zero-Extension Visualizer</h2>
+  <p>Click the operations below to test how writing to different sub-registers modifies the 64-bit <code>RAX</code> value in real-time:</p>
+
+  <div class="interactive-widget reg-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">tune</span> 64-bit Register: RAX</div>
+      <div class="badge-sec on" id="reg-width-badge">WIDTH: 64-BIT</div>
+    </div>
+
+    <div class="reg-labels">
+      <span>Byte 7 (MSB)</span>
+      <span>Byte 6</span>
+      <span>Byte 5</span>
+      <span>Byte 4</span>
+      <span>Byte 3</span>
+      <span>Byte 2</span>
+      <span>Byte 1</span>
+      <span>Byte 0 (LSB)</span>
+    </div>
+
+    <div class="reg-track" id="reg-bytes-track">
+      <div class="reg-byte-box" id="rb-7">00</div>
+      <div class="reg-byte-box" id="rb-6">00</div>
+      <div class="reg-byte-box" id="rb-5">7F</div>
+      <div class="reg-byte-box" id="rb-4">FF</div>
+      <div class="reg-byte-box" id="rb-3">DE</div>
+      <div class="reg-byte-box" id="rb-2">AD</div>
+      <div class="reg-byte-box" id="rb-1">BE</div>
+      <div class="reg-byte-box" id="rb-0">EF</div>
+    </div>
+
+    <div class="bits-out">
+      <p><b>Current Value:</b> <code>RAX = 0x00007FFFDEADBEEF</code></p>
+      <p id="reg-exp-text">Upper 32 bits hold <code>0x00007FFF</code>. Lower 32 bits (EAX) hold <code>0xDEADBEEF</code>.</p>
+    </div>
+
+    <div class="reg-controls">
+      <button class="reg-btn" id="op-mov-al" type="button">mov al, 0x42</button>
+      <button class="reg-btn" id="op-mov-ax" type="button">mov ax, 0x1337</button>
+      <button class="reg-btn" id="op-mov-eax" type="button">mov eax, 0xCAFEBABE (Zero Extends!)</button>
+      <button class="reg-btn" id="op-xor-rax" type="button">xor rax, rax (Clear All)</button>
+      <button class="reg-btn" id="op-reset-rax" type="button">Reset Default</button>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Privilege Rings & The Syscall Boundary</h2>
+  <p>CPUs enforce hardware isolation using <b>Privilege Rings</b> (typically Ring 0 and Ring 3):</p>
+  <div class="switches">
+    <div class="switch"><span class="icon">lock</span><code>RING 0</code><b>Kernel / Supervisor</b></div>
+    <div class="switch on"><span class="icon fill">person</span><code>RING 3</code><b>Userland Binaries</b></div>
+  </div>
+  <p>Userland programs cannot execute privileged instructions (like disabling interrupts, altering CR3 page tables, or writing to physical ports). When a program wants to write to stdout or allocate memory, it executes the <code>syscall</code> instruction.</p>
+  <p>In x86_64 Linux, system calls pass arguments via registers:</p>
+  <ol class="units">
+    <li><code>RAX</code>: System Call Number (e.g., <code>59</code> for <code>sys_execve</code>, <code>1</code> for <code>sys_write</code>).</li>
+    <li><code>RDI</code>: 1st argument (e.g., pointer to filename string <code>"/bin/sh"</code>).</li>
+    <li><code>RSI</code>: 2nd argument (e.g., argv pointer array).</li>
+    <li><code>RDX</code>: 3rd argument (e.g., envp pointer array).</li>
+  </ol>
+</section>
+
+
+
+</article>
+          <nav class="lesson-navs" aria-label="Topics">
+            <a class="card lesson-nav prev" href="../../learn/1-1.html" data-link>
+          <span class="meta">Previous Topic</span>
+          <span class="title">1.1 CPU Execution Engine &amp; The Instruction Pipeline</span>
+        </a>
+            <a class="card lesson-nav next" href="../../learn/1-3.html" data-link>
+          <span class="meta">Next Topic</span>
+          <span class="title">1.3 Virtual Memory, Paging &amp; Address Translation</span>
+        </a>
+          </nav>
+        </div></main>
+
+<noscript id="lesson-copies">
+  <div class="wrap">
+    <h2>Curriculum Overview</h2>
+    <ul>
+      <li><a href="learn/1-1.html">1.1 CPU Execution Engine & Instruction Pipeline</a></li>
+      <li><a href="learn/1-2.html">1.2 Registers, Privilege Rings & CPU States</a></li>
+      <li><a href="learn/1-3.html">1.3 Virtual Memory, Paging & Address Translation</a></li>
+      <li><a href="learn/1-4.html">1.4 The Call Stack, Frames & ABI Calling Conventions</a></li>
+      <li><a href="learn/2-1.html">2.1 ELF & PE Binary Formats Under the Microscope</a></li>
+      <li><a href="learn/2-2.html">2.2 Opcodes, Encoding & Disassembly Mechanics</a></li>
+      <li><a href="learn/2-3.html">2.3 Control Flow Graphs & Decompilation Logic</a></li>
+      <li><a href="learn/3-1.html">3.1 Static Analysis: Triage, Strings & Cross-References</a></li>
+      <li><a href="learn/3-2.html">3.2 Dynamic Analysis & Debugger Internals</a></li>
+      <li><a href="learn/3-3.html">3.3 Anti-Reverse Engineering & Defense Evasion</a></li>
+      <li><a href="learn/4-1.html">4.1 Memory Corruption: Stack Buffer Overflows</a></li>
+      <li><a href="learn/4-2.html">4.2 Modern Exploit Mitigations & Defenses</a></li>
+      <li><a href="learn/4-3.html">4.3 Return-Oriented Programming (ROP) Foundations</a></li>
+    </ul>
+  </div>
+</noscript>
+
+<footer class="footer">
+  <div class="wrap">
+    <b>Lazarus</b> is free and open source. Built for offensive security researchers and reverse engineers.
+  </div>
+</footer>
+</body>
+</html>
+

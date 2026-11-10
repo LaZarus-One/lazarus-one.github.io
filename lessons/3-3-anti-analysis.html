@@ -1,0 +1,39 @@
+<section class="card">
+  <p>Malware authors, game developers, and commercial software vendors don't want you peering inside their binaries. They deploy <b>Anti-Analysis</b> techniques designed to detect debuggers, disarm sandboxes, crash analysis tools, or deliberately confuse reverse engineers.</p>
+  <p>Recognizing and neutralising these anti-analysis defenses is an indispensable skill for any offensive security researcher or malware analyst.</p>
+</section>
+
+<section class="card">
+  <h2>Common Anti-Debugging Mechanisms</h2>
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Technique</th><th scope="col">Platform</th><th scope="col">Mechanism</th><th scope="col">Bypass Strategy</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>PEB.BeingDebugged</code></th><td>Windows</td><td>Checks byte at <code>gs:[60h] + 2</code> (PEB). Returns 1 if debugged.</td><td>Patch byte to 0 in memory or use x64dbg ScyllaHide plugin</td></tr>
+        <tr><th scope="row"><code>NtGlobalFlag</code></th><td>Windows</td><td>Checks <code>PEB + 0xBC</code>. Debuggers set flags <code>0x70</code> (heap tail/free checks).</td><td>Clear the <code>NtGlobalFlag</code> field in PEB</td></tr>
+        <tr><th scope="row"><code>TracerPid</code> check</th><td>Linux</td><td>Reads <code>/proc/self/status</code>; <code>TracerPid</code> is non-zero if attached.</td><td>Hook <code>open</code> / <code>read</code> syscalls to return <code>TracerPid: 0</code></td></tr>
+        <tr><th scope="row"><code>PTRACE_TRACEME</code></th><td>Linux</td><td>Calls <code>ptrace(0, 0, 1, 0)</code>. Fails (-1) if GDB is already attached.</td><td>Patch binary or hook ptrace with <code>LD_PRELOAD</code> to return 0</td></tr>
+        <tr><th scope="row"><code>RDTSC</code> Timing Check</th><td>Cross-Platform</td><td>Measures CPU clock cycles elapsed between instructions. Breakpoints cause massive delays.</td><td>Patch conditional branch following the cycle subtraction</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">schedule</span>
+  <div><b>The RDTSC Time Bomb:</b> The <code>rdtsc</code> instruction loads the CPU's 64-bit cycle counter into <code>EDX:EAX</code>. Malware measures the delta across a critical routine: a normal execution takes ~50 cycles, but if a human analyst single-steps or a breakpoint fires, the delta exceeds 100,000 cycles! The malware immediately alters execution flow or quietly wipes its decrypted payload.</div>
+</aside>
+
+<section class="card">
+  <h2>Code Obfuscation Primitives</h2>
+  <ol class="units">
+    <li><b>Opaque Predicates:</b> Conditionals whose outcome is known to the author at compile-time (e.g. <code>x^2 + 1 &gt; 0</code> is always true), but forces the disassembler to analyze both dead and live branches.</li>
+    <li><b>Control Flow Flattening:</b> Breaks a function's linear flow into disconnected basic blocks controlled by an artificial state variable inside a massive central <code>switch</code> loop.</li>
+    <li><b>String Encryption / Dynamic API Hashing:</b> Strings are stored as XOR-encrypted arrays and resolved on the fly using custom hash functions (e.g., ROR13) instead of cleartext API names.</li>
+  </ol>
+</section>
+
+<div class="challenge-slot"></div>
+

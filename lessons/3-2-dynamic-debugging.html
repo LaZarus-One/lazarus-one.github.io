@@ -1,0 +1,34 @@
+<section class="card">
+  <p>Static analysis tells you what a binary <i>could</i> do; dynamic analysis proves what it <i>actually</i> does. When malware unpacks itself in memory, decrypts strings at runtime, or runs through complex anti-reversing checks, a debugger is your most potent instrument.</p>
+  <p>To master dynamic analysis, you must understand how debuggers (like GDB, x64dbg, and WinDbg) manipulate the CPU at the hardware and kernel levels.</p>
+</section>
+
+<section class="card">
+  <h2>The Secret Mechanics of Software Breakpoints (INT 3)</h2>
+  <p>When you type <code>break *0x401120</code> in GDB or press F2 in x64dbg, the debugger does something counter-intuitive: it <b>alters the target program’s memory</b>!</p>
+  <ol class="units">
+    <li><b>Byte Substitution:</b> The debugger saves the original byte at address <code>0x401120</code> (say, <code>0x55</code> for <code>push rbp</code>) and replaces it with byte <code>0xCC</code> (the opcode for <code>INT 3</code>).</li>
+    <li><b>The Trap:</b> The CPU executes forward. When <code>RIP</code> hits <code>0xCC</code>, the CPU triggers hardware interrupt vector 3 (Breakpoint Exception).</li>
+    <li><b>Process Halting:</b> The kernel halts the target process and delivers a <code>SIGTRAP</code> signal to the debugger.</li>
+    <li><b>State Restoration:</b> The debugger replaces <code>0xCC</code> with the original <code>0x55</code>, rolls <code>RIP</code> back by 1 byte, and waits for your commands!</li>
+  </ol>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">developer_board</span>
+  <div><b>Hardware Breakpoints (Debug Registers DR0–DR7):</b> Software breakpoints fail if code is placed in read-only memory or if malware performs memory integrity checksums (scanning for <code>0xCC</code> bytes). To bypass this, processors include dedicated hardware debug registers: <b>DR0, DR1, DR2, DR3</b> hold memory addresses, while <b>DR7</b> defines whether to trigger on Execution, Data Write, or Data Read/Write (Watchpoints). Hardware breakpoints <b>never modify memory bytes</b>!</div>
+</aside>
+
+<section class="card">
+  <h2>Single-Stepping & The Trap Flag</h2>
+  <p>How does a debugger let you step instruction-by-instruction (Step Into / F7)?</p>
+  <p>Inside the 64-bit <code>RFLAGS</code> register sits bit 8: the <b>Trap Flag (TF)</b>.</p>
+  <div class="switches">
+    <div class="switch"><span class="icon">speed</span><code>TF = 0</code><b>Normal continuous CPU execution</b></div>
+    <div class="switch on"><span class="icon fill">pest_control</span><code>TF = 1</code><b>Single-step mode enabled</b></div>
+  </div>
+  <p>When <code>TF</code> is set to <code>1</code>, the processor executes exactly one instruction and immediately raises a single-step exception (Interrupt 1), returning control to the debugger after every single opcode!</p>
+</section>
+
+<div class="challenge-slot"></div>
+

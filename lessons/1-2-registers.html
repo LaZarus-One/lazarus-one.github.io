@@ -1,0 +1,98 @@
+<section class="card">
+  <p>Registers are tiny, ultra-high-speed memory cells embedded directly inside the CPU core. Accessing RAM takes roughly 50 to 100 nanoseconds; reading a register takes less than a single nanosecond (a single clock cycle). Because memory is comparatively slow, machine execution happens almost exclusively inside CPU registers.</p>
+  <p>On x86_64 architectures, you have 16 general-purpose 64-bit registers: <code>RAX</code>, <code>RBX</code>, <code>RCX</code>, <code>RDX</code>, <code>RSI</code>, <code>RDI</code>, <code>RBP</code>, <code>RSP</code>, and <code>R8</code> through <code>R15</code>.</p>
+</section>
+
+<section class="card">
+  <h2>Register Anatomy & The 32-bit Zero-Extension Trap</h2>
+  <p>To preserve backward compatibility with 32-bit and 16-bit x86 software, x86_64 allows you to address sub-slices of the primary registers:</p>
+  
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Register</th><th scope="col">Width</th><th scope="col">Bits Covered</th><th scope="col">Historical / Primary Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>RAX</code></th><td>64-bit</td><td>[63:0]</td><td>Accumulator, Function return values, Syscall numbers</td></tr>
+        <tr><th scope="row"><code>EAX</code></th><td>32-bit</td><td>[31:0]</td><td>Lower 32 bits of RAX (zero-extends upper 32 bits!)</td></tr>
+        <tr><th scope="row"><code>AX</code></th><td>16-bit</td><td>[15:0]</td><td>Lower 16 bits of RAX</td></tr>
+        <tr><th scope="row"><code>AH</code> / <code>AL</code></th><td>8-bit</td><td>[15:8] / [7:0]</td><td>High byte / Low byte of AX</td></tr>
+        <tr><th scope="row"><code>RSP</code></th><td>64-bit</td><td>[63:0]</td><td>Stack Pointer (always points to top of stack)</td></tr>
+        <tr><th scope="row"><code>RBP</code></th><td>64-bit</td><td>[63:0]</td><td>Base Frame Pointer (anchors the active function frame)</td></tr>
+        <tr><th scope="row"><code>RIP</code></th><td>64-bit</td><td>[63:0]</td><td>Instruction Pointer (address of next instruction to execute)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">warning</span>
+  <div><b>The Golden Rule of x86_64 Zero Extension:</b> Writing to an 8-bit or 16-bit sub-register (like <code>AL</code> or <code>AX</code>) leaves the rest of <code>RAX</code> unchanged. However, writing to any 32-bit register (like <code>EAX</code>) <b>automatically clears all upper 32 bits of RAX to zeroes</b>. Vulnerability researchers exploit this behavior to clear register clobbering when constructing shellcode and ROP chains!</div>
+</aside>
+
+<section class="card">
+  <h2>Interactive Register Slicer & Zero-Extension Visualizer</h2>
+  <p>Click the operations below to test how writing to different sub-registers modifies the 64-bit <code>RAX</code> value in real-time:</p>
+
+  <div class="interactive-widget reg-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">tune</span> 64-bit Register: RAX</div>
+      <div class="badge-sec on" id="reg-width-badge">WIDTH: 64-BIT</div>
+    </div>
+
+    <div class="reg-labels">
+      <span>Byte 7 (MSB)</span>
+      <span>Byte 6</span>
+      <span>Byte 5</span>
+      <span>Byte 4</span>
+      <span>Byte 3</span>
+      <span>Byte 2</span>
+      <span>Byte 1</span>
+      <span>Byte 0 (LSB)</span>
+    </div>
+
+    <div class="reg-track" id="reg-bytes-track">
+      <div class="reg-byte-box" id="rb-7">00</div>
+      <div class="reg-byte-box" id="rb-6">00</div>
+      <div class="reg-byte-box" id="rb-5">7F</div>
+      <div class="reg-byte-box" id="rb-4">FF</div>
+      <div class="reg-byte-box" id="rb-3">DE</div>
+      <div class="reg-byte-box" id="rb-2">AD</div>
+      <div class="reg-byte-box" id="rb-1">BE</div>
+      <div class="reg-byte-box" id="rb-0">EF</div>
+    </div>
+
+    <div class="bits-out">
+      <p><b>Current Value:</b> <code>RAX = 0x00007FFFDEADBEEF</code></p>
+      <p id="reg-exp-text">Upper 32 bits hold <code>0x00007FFF</code>. Lower 32 bits (EAX) hold <code>0xDEADBEEF</code>.</p>
+    </div>
+
+    <div class="reg-controls">
+      <button class="reg-btn" id="op-mov-al" type="button">mov al, 0x42</button>
+      <button class="reg-btn" id="op-mov-ax" type="button">mov ax, 0x1337</button>
+      <button class="reg-btn" id="op-mov-eax" type="button">mov eax, 0xCAFEBABE (Zero Extends!)</button>
+      <button class="reg-btn" id="op-xor-rax" type="button">xor rax, rax (Clear All)</button>
+      <button class="reg-btn" id="op-reset-rax" type="button">Reset Default</button>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Privilege Rings & The Syscall Boundary</h2>
+  <p>CPUs enforce hardware isolation using <b>Privilege Rings</b> (typically Ring 0 and Ring 3):</p>
+  <div class="switches">
+    <div class="switch"><span class="icon">lock</span><code>RING 0</code><b>Kernel / Supervisor</b></div>
+    <div class="switch on"><span class="icon fill">person</span><code>RING 3</code><b>Userland Binaries</b></div>
+  </div>
+  <p>Userland programs cannot execute privileged instructions (like disabling interrupts, altering CR3 page tables, or writing to physical ports). When a program wants to write to stdout or allocate memory, it executes the <code>syscall</code> instruction.</p>
+  <p>In x86_64 Linux, system calls pass arguments via registers:</p>
+  <ol class="units">
+    <li><code>RAX</code>: System Call Number (e.g., <code>59</code> for <code>sys_execve</code>, <code>1</code> for <code>sys_write</code>).</li>
+    <li><code>RDI</code>: 1st argument (e.g., pointer to filename string <code>"/bin/sh"</code>).</li>
+    <li><code>RSI</code>: 2nd argument (e.g., argv pointer array).</li>
+    <li><code>RDX</code>: 3rd argument (e.g., envp pointer array).</li>
+  </ol>
+</section>
+
+<div class="challenge-slot"></div>
+

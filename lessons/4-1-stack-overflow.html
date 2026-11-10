@@ -1,0 +1,91 @@
+<section class="card">
+  <p>C and C++ are the building blocks of operating systems and high-performance engines, but they lack native memory safety. They trust the programmer completely: if a program tells the CPU to write 64 bytes into a 16-byte stack array, the CPU blindly writes all 64 bytes, stomping over whatever happens to be sitting next door in memory.</p>
+  <p>This architectural vulnerability is the classic <b>Stack Buffer Overflow</b>—the vulnerability class that started modern software exploitation.</p>
+</section>
+
+<section class="card">
+  <h2>The Geometry of a Stack Smash</h2>
+  <p>Recall how the stack grows downward (high to low addresses), while buffers in C fill upward (low to high addresses):</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Offset from Buffer</th><th scope="col">Memory Region</th><th scope="col">Normal Value</th><th scope="col">Smashed Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Bytes 0 to 15</th><td>Local Buffer (<code>char buf[16]</code>)</td><td>User input</td><td><code>"AAAAAAAAAAAAAAAA"</code></td></tr>
+        <tr><th scope="row">Bytes 16 to 23</th><td>Saved Frame Pointer (<code>RBP</code>)</td><td>Caller's base pointer</td><td><code>"BBBBBBBB"</code> (Clobbered)</td></tr>
+        <tr><th scope="row">Bytes 24 to 31</th><td><b>Saved Return Address (RIP)</b></td><td><code>0x00000000004011bd</code></td><td><b><code>0x4141414141414141</code> (CONTROLLED!)</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">dangerous</span>
+  <div><b>The Moment of Hijack:</b> The crash or code redirection does not occur when the overflow happens! It occurs when the vulnerable function reaches its closing instruction: <code>ret</code>. The CPU pops 8 bytes from <code>[RSP]</code> into <code>RIP</code>. If those 8 bytes are <code>0x4141414141414141</code> ("AAAAAAAA"), the CPU attempts to fetch an instruction from address <code>0x4141414141414141</code>, triggering an instant Segmentation Fault!</div>
+</aside>
+
+<section class="card">
+  <h2>Interactive Buffer Overflow Visualizer</h2>
+  <p>Send payloads of increasing lengths to observe how memory overflows from the buffer into the Saved RBP and the critical Return Address:</p>
+
+  <div class="interactive-widget overflow-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">bomb</span> Target Stack: 16-byte Buffer</div>
+      <div class="badge-sec off" id="overflow-status-badge">STATE: NORMAL</div>
+    </div>
+
+    <div class="overflow-bar" id="overflow-cells-bar">
+      <!-- 16 bytes buffer -->
+      <div class="overflow-byte safe" title="buf[0]">00</div>
+      <div class="overflow-byte safe" title="buf[1]">00</div>
+      <div class="overflow-byte safe" title="buf[2]">00</div>
+      <div class="overflow-byte safe" title="buf[3]">00</div>
+      <div class="overflow-byte safe" title="buf[4]">00</div>
+      <div class="overflow-byte safe" title="buf[5]">00</div>
+      <div class="overflow-byte safe" title="buf[6]">00</div>
+      <div class="overflow-byte safe" title="buf[7]">00</div>
+      <div class="overflow-byte safe" title="buf[8]">00</div>
+      <div class="overflow-byte safe" title="buf[9]">00</div>
+      <div class="overflow-byte safe" title="buf[10]">00</div>
+      <div class="overflow-byte safe" title="buf[11]">00</div>
+      <div class="overflow-byte safe" title="buf[12]">00</div>
+      <div class="overflow-byte safe" title="buf[13]">00</div>
+      <div class="overflow-byte safe" title="buf[14]">00</div>
+      <div class="overflow-byte safe" title="buf[15]">00</div>
+      <!-- 8 bytes saved RBP -->
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <div class="overflow-byte saved-rbp" title="Saved RBP">BP</div>
+      <!-- 8 bytes saved RIP -->
+      <div class="overflow-byte" id="rip-cell-0" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-1" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-2" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-3" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-4" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-5" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-6" title="Return Address">IP</div>
+      <div class="overflow-byte" id="rip-cell-7" title="Return Address">IP</div>
+    </div>
+
+    <div class="bits-out">
+      <p id="overflow-msg">Buffer is empty. Send a payload to test boundary integrity.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-tonal" id="btn-send-16" type="button">Send 16 Bytes (Safe)</button>
+      <button class="btn btn-tonal" id="btn-send-24" type="button">Send 24 Bytes (Corrupt RBP)</button>
+      <button class="btn btn-filled" id="btn-send-32" type="button">Send 32 Bytes (Smash RIP!)</button>
+      <button class="btn btn-text" id="btn-reset-overflow" type="button">Reset Stack</button>
+    </div>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

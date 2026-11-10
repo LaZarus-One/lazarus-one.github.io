@@ -1,0 +1,68 @@
+<section class="card">
+  <p>To reverse engineer binaries or build reliable exploits, you must first understand how silicon turns electric current into computational logic. At its core, every modern computer follows the <b>Von Neumann architecture</b>: a design where program code and data share the very same physical memory space.</p>
+  <p>In low-level security, this shared nature is both the foundation of high-performance computing and the original sin of software vulnerabilities. When code and data live side-by-side in RAM, a program that mistakenly treats attacker-controlled data as executable code can be completely compromised.</p>
+  <div class="switches">
+    <div class="switch on"><span class="icon fill">memory</span><code>CODE</code><b>Instructions</b></div>
+    <div class="switch on"><span class="icon fill">database</span><code>DATA</code><b>Variables & Buffers</b></div>
+  </div>
+  <p>Both instructions and data are indistinguishable strings of binary bytes in memory. The CPU only knows a byte is an "instruction" because the <b>Instruction Pointer</b> points to it.</p>
+</section>
+
+<section class="card">
+  <h2>The Fetch-Decode-Execute Cycle</h2>
+  <p>Every single millisecond, modern processor cores execute billions of machine instructions through a continuous, hardware-driven loop known as the <b>Instruction Cycle</b>:</p>
+  <ol class="units">
+    <li><b>Fetch (IF):</b> The CPU reads the machine code bytes located at the memory address currently held in the 64-bit Instruction Pointer register (<code>RIP</code> on x86_64, <code>PC</code> on ARM64).</li>
+    <li><b>Decode (ID):</b> The CPU instruction decoder parses the raw bytes into micro-operations (μops), determining the opcode, source operands, destination registers, and memory offsets.</li>
+    <li><b>Execute (EX):</b> The Arithmetic Logic Unit (ALU) or Execution Engine executes the μops, updates processor flags (like Zero, Carry, or Sign flag), writes results, and advances <code>RIP</code> to the next instruction.</li>
+  </ol>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">security</span>
+  <div><b>The Hacker's Prime Objective:</b> Control <code>RIP</code>. In offensive security, virtually all memory corruption exploits—from buffer overflows to Use-After-Free and ROP chains—have a single ultimate purpose: redirecting the CPU's Instruction Pointer to attacker-controlled instructions.</div>
+</aside>
+
+<section class="card">
+  <h2>Interactive CPU Execution Stepper</h2>
+  <p>Observe how the CPU steps through real x86_64 machine code instructions, updating <code>RIP</code> and parsing raw opcodes into assembly:</p>
+  
+  <div class="interactive-widget fde-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">memory</span> CPU Core: Thread 0 (x86_64)</div>
+      <div class="badge-sec on">ALU ONLINE</div>
+    </div>
+    
+    <div class="pipeline-grid">
+      <div class="pipeline-stage active" id="pipe-fetch">
+        <div class="stage-name">1. Fetch [RIP]</div>
+        <div class="stage-val" id="fde-rip">0x401000</div>
+      </div>
+      <div class="pipeline-stage" id="pipe-decode">
+        <div class="stage-name">2. Decoded Opcode</div>
+        <div class="stage-val" id="fde-dec">48 89 E5</div>
+      </div>
+      <div class="pipeline-stage" id="pipe-exec">
+        <div class="stage-name">3. Execute μOp</div>
+        <div class="stage-val" id="fde-exec">mov rbp, rsp</div>
+      </div>
+    </div>
+
+    <div class="asm-card">
+      <div class="asm-line" id="asm-0"><span class="asm-addr">0x401000:</span><span class="asm-bytes">48 89 e5</span><span class="asm-inst">mov rbp, rsp</span><span class="asm-comment">; establish stack frame</span></div>
+      <div class="asm-line" id="asm-1"><span class="asm-addr">0x401003:</span><span class="asm-bytes">48 83 ec 10</span><span class="asm-inst">sub rsp, 0x10</span><span class="asm-comment">; allocate 16 bytes</span></div>
+      <div class="asm-line" id="asm-2"><span class="asm-addr">0x401007:</span><span class="asm-bytes">b8 2a 00 00 00</span><span class="asm-inst">mov eax, 42</span><span class="asm-comment">; return value = 42</span></div>
+      <div class="asm-line" id="asm-3"><span class="asm-addr">0x40100c:</span><span class="asm-bytes">c9</span><span class="asm-inst">leave</span><span class="asm-comment">; tear down frame</span></div>
+      <div class="asm-line" id="asm-4"><span class="asm-addr">0x40100d:</span><span class="asm-bytes">c3</span><span class="asm-inst">ret</span><span class="asm-comment">; return to caller</span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-filled" id="fde-next-btn" type="button"><span class="icon">play_arrow</span>Step Clock Cycle</button>
+      <button class="btn btn-tonal" id="fde-reset-btn" type="button"><span class="icon">restart_alt</span>Reset</button>
+    </div>
+    <p class="stack-msg" id="fde-msg">Click Step Clock Cycle to advance execution.</p>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

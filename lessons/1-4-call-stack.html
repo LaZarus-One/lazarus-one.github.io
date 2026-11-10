@@ -1,0 +1,129 @@
+<section class="card">
+  <p>The call stack is the beating heart of procedural execution in C and assembly. It manages function parameters,
+    local variables, frame nesting, and where execution must return when a function completes.</p>
+  <p>Two golden rules govern modern stacks on x86_64:</p>
+  <ol class="units">
+    <li><b>LIFO (Last-In, First-Out):</b> The most recent value pushed onto the stack is the first value popped off.
+    </li>
+    <li><b>Downward Growth:</b> As values are pushed onto the stack, the Stack Pointer (<code>RSP</code>) decrements
+      towards <b>lower memory addresses</b>. When values are popped, <code>RSP</code> increments towards higher
+      addresses.</li>
+  </ol>
+</section>
+
+<section class="card">
+  <h2>The Anatomy of a Stack Frame</h2>
+  <p>When function <code>main()</code> invokes function <code>vulnerable_func()</code>, a new stack frame is built:</p>
+
+  <div class="interactive-widget stack-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">layers</span> Live x86_64 Stack Frame</div>
+      <div class="badge-sec on">ALIGN: 16-BYTE</div>
+    </div>
+
+    <div class="stack-frame-box" id="stack-frame-display">
+      <div class="stack-row-item">
+        <span class="stack-addr">0x7fffffffe028</span>
+        <div class="stack-slot ret">[ Return Address: 0x4011bd ]</div>
+        <span class="stack-ptr">&larr; Caller Return</span>
+      </div>
+      <div class="stack-row-item">
+        <span class="stack-addr">0x7fffffffe020</span>
+        <div class="stack-slot rbp">[ Saved RBP: 0x7fffffffe050 ]</div>
+        <span class="stack-ptr">&larr; RBP (Base)</span>
+      </div>
+      <div class="stack-row-item">
+        <span class="stack-addr">0x7fffffffe018</span>
+        <div class="stack-slot local">[ Local Var: buffer[8..15] ]</div>
+        <span class="stack-ptr"></span>
+      </div>
+      <div class="stack-row-item">
+        <span class="stack-addr">0x7fffffffe010</span>
+        <div class="stack-slot local">[ Local Var: buffer[0..7] ]</div>
+        <span class="stack-ptr">&larr; RSP (Top)</span>
+      </div>
+    </div>
+
+    <div class="bits-out">
+      <p id="stack-exp-text"><code>RSP</code> points to <code>0x7fffffffe010</code>. Pushing decreases RSP by 8 bytes;
+        popping increases RSP by 8 bytes.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-filled" id="btn-stack-push" type="button"><span class="icon">add</span>Push 0x1337 (RSP -
+        8)</button>
+      <button class="btn btn-tonal" id="btn-stack-pop" type="button"><span class="icon">remove</span>Pop RAX (RSP +
+        8)</button>
+      <button class="btn btn-text" id="btn-stack-reset" type="button">Reset Frame</button>
+    </div>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">key</span>
+  <div><b>The Prologue and Epilogue Contract:</b> Every standard compiled function opens with
+    <code>push rbp; mov rbp, rsp; sub rsp, N</code> and concludes with <code>leave; ret</code>. The <code>ret</code>
+    instruction is literally equivalent to <code>pop rip</code>: it takes whatever 8 bytes are at <code>[RSP]</code> and
+    loads them directly into the CPU's instruction pointer!</div>
+</aside>
+
+<section class="card">
+  <h2>ABI Calling Conventions: Linux vs Windows</h2>
+  <p>How do functions pass parameters to other functions? It depends on the operating system ABI:</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr>
+          <th scope="col">Parameter</th>
+          <th scope="col">System V AMD64 (Linux / BSD / macOS)</th>
+          <th scope="col">Microsoft x64 (Windows PE)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1st argument</th>
+          <td><code>RDI</code></td>
+          <td><code>RCX</code></td>
+        </tr>
+        <tr>
+          <th scope="row">2nd argument</th>
+          <td><code>RSI</code></td>
+          <td><code>RDX</code></td>
+        </tr>
+        <tr>
+          <th scope="row">3rd argument</th>
+          <td><code>RDX</code></td>
+          <td><code>R8</code></td>
+        </tr>
+        <tr>
+          <th scope="row">4th argument</th>
+          <td><code>RCX</code></td>
+          <td><code>R9</code></td>
+        </tr>
+        <tr>
+          <th scope="row">5th argument</th>
+          <td><code>R8</code></td>
+          <td>Stack (Pushed right-to-left)</td>
+        </tr>
+        <tr>
+          <th scope="row">6th argument</th>
+          <td><code>R9</code></td>
+          <td>Stack</td>
+        </tr>
+        <tr>
+          <th scope="row">Return Value</th>
+          <td><code>RAX</code></td>
+          <td><code>RAX</code></td>
+        </tr>
+        <tr>
+          <th scope="row">Shadow Space</th>
+          <td>None (Uses 128-byte Red Zone below RSP)</td>
+          <td>Mandatory 32 bytes allocated by caller</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>

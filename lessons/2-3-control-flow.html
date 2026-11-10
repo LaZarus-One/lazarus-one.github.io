@@ -1,0 +1,67 @@
+<section class="card">
+  <p>Reading flat linear assembly files is exhausting. Modern reverse engineering tools like IDA Pro, Ghidra, and Binary Ninja represent functions as <b>Control Flow Graphs (CFG)</b> to make program logic immediately obvious.</p>
+  <p>A CFG breaks a function down into <b>Basic Blocks</b>: contiguous sequences of instructions where control enters strictly at the first instruction and leaves strictly at the final instruction, with no branches in the middle.</p>
+</section>
+
+<section class="card">
+  <h2>Interactive Control Flow Graph Anatomy</h2>
+  <p>Inspect how a classic C password validation condition translates into basic blocks and branch edges:</p>
+
+  <div class="interactive-widget cfg-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">account_tree</span> CFG: auth_check(char *input)</div>
+      <div class="badge-sec on">CFG RECONSTRUCTED</div>
+    </div>
+
+    <!-- Parent block -->
+    <div class="cfg-node branch">
+      <div class="eyebrow">Block 0: Evaluation</div>
+      <div><code>cmp dword ptr [rbp-4], 0x1337</code></div>
+      <div><code>jne loc_wrong_pass</code></div>
+    </div>
+
+    <div class="cfg-branches">
+      <!-- True branch: Green -->
+      <div class="cfg-branch-box true-branch">
+        <div class="eyebrow" style="color:var(--on-green-c)">Condition TRUE (JE taken)</div>
+        <div><code>mov rdi, offset s_access_granted</code></div>
+        <div><code>call puts</code></div>
+        <div><code>mov eax, 1 ; Success</code></div>
+      </div>
+
+      <!-- False branch: Red -->
+      <div class="cfg-branch-box false-branch">
+        <div class="eyebrow" style="color:var(--on-red-c)">Condition FALSE (JNE taken)</div>
+        <div><code>mov rdi, offset s_access_denied</code></div>
+        <div><code>call puts</code></div>
+        <div><code>xor eax, eax ; Failure</code></div>
+      </div>
+    </div>
+
+    <div class="bits-out">
+      <p><b>Reverse Engineer's Insight:</b> Patching this binary in a debugger or hex editor requires changing a single byte: modifying <code>75</code> (<code>JNE</code>) into <code>74</code> (<code>JE</code>) or <code>90 90</code> (<code>NOP NOP</code>) to completely bypass the authentication check!</p>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Recognizing High-Level Idioms in Assembly</h2>
+  <p>Compilers follow predictable patterns when transforming high-level C logic into machine code:</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">C Construct</th><th scope="col">Assembly Pattern</th><th scope="col">Key Identifying Feature</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>if (a == b)</code></th><td><code>cmp rax, rbx; jne else_label</code></td><td>Conditional jump skips over the body block</td></tr>
+        <tr><th scope="row"><code>while (x < 10)</code></th><td><code>jmp check; loop: ...; check: cmp x, 10; jl loop</code></td><td>Unconditional jump down to test, conditional jump back up</td></tr>
+        <tr><th scope="row"><code>for (i=0; i&lt;n; i++)</code></th><td><code>mov i, 0; jmp test; loop: ...; add i, 1; test: cmp i, n; jl loop</code></td><td>Induction variable incremented right before test</td></tr>
+        <tr><th scope="row">Dense <code>switch(x)</code></th><td><code>cmp x, max; ja default; jmp [table + x*8]</code></td><td><b>Jump Table</b>: Indirect jump through an array of code pointers</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

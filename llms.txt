@@ -1,0 +1,25 @@
+# Lazarus: Machine Execution & Reverse Engineering
+> Free, open-source educational platform for low-level machine execution, CPU internals, binary analysis, and cybersecurity exploitation.
+
+## Chapters & Topics
+
+### Chapter 1: Machine Execution & Hardware Architecture
+- [1-1] CPU Execution Engine & The Instruction Pipeline: Von Neumann model, the Fetch-Decode-Execute cycle, clock cycles, and instruction pointer hijacking.
+- [1-2] Registers, Privilege Rings & State Transitions: x86_64 general purpose registers, 32-bit zero extension quirk, Ring 0 vs Ring 3, and SYSCALLs.
+- [1-3] Virtual Memory, Paging & Address Translation: Virtual address spaces, page tables, page faults, and the hardware NX/XD permission bit.
+- [1-4] The Call Stack, Frames & ABI Conventions: Stack growth, RSP/RBP management, CALL/RET internals, and System V vs Microsoft x64 calling conventions.
+
+### Chapter 2: Binary Anatomy, Machine Code & Disassembly
+- [2-1] ELF & PE Binary Formats Under the Microscope: Magic headers, segments vs sections (.text, .rodata, .data, .bss), GOT/PLT dynamic resolution, and entry points.
+- [2-2] Opcodes, Encoding & Disassembly Mechanics: Machine instruction anatomy: prefixes, opcodes, ModR/M and SIB bytes, and linear sweep vs recursive disassembly.
+- [2-3] Control Flow Graphs & Decompilation Logic: Basic blocks, branches, edge traversal, and reconstructing C conditionals, loops, and switch jump tables.
+
+### Chapter 3: Reverse Engineering Methodologies & Tooling
+- [3-1] Static Analysis: Triage, Strings & Cross-References: Triage methodology, entropy analysis for packing detection, string recovery, and crypto routine identification.
+- [3-2] Dynamic Analysis & Debugger Internals: How debuggers manipulate targets: INT 3 (0xCC) software breakpoints, DR0-DR7 hardware debug registers, and the Trap Flag.
+- [3-3] Anti-Reverse Engineering & Defense Evasion: TracerPid, PEB BeingDebugged, RDTSC timing checks, control flow flattening, and evasion detection.
+
+### Chapter 4: Low-Level Vulnerabilities & Exploit Primitives
+- [4-1] Memory Corruption: Stack Buffer Overflows: Unsafe memory copies, stack frame corruption, cyclic patterns, and hijacking RIP for code execution.
+- [4-2] Modern Exploit Mitigations & Defenses: Stack canaries (__stack_chk_fail), NX/DEP, ASLR/PIE, and Partial vs Full RELRO mitigation matrix.
+- [4-3] Return-Oriented Programming (ROP) Foundations: Defeating W^X/DEP: gadgets ending in RET, pivoting RSP, and crafting an execve('/bin/sh') chain.

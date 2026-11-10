@@ -1,0 +1,53 @@
+<section class="card">
+  <p>Compilers translate high-level source code into machine code—a sequence of binary bytes. A disassembler’s job is the inverse: taking bytes like <code>55 48 89 E5</code> and converting them into human-readable assembly instructions like <code>push rbp; mov rbp, rsp</code>.</p>
+  <p>Unlike RISC architectures (such as ARM or MIPS) where all instructions are a fixed 4 bytes (32 bits), x86_64 is a Complex Instruction Set Computer (CISC) with <b>variable-length instructions</b> ranging from <b>1 byte up to 15 bytes</b> in length!</p>
+</section>
+
+<section class="card">
+  <h2>The x86_64 Instruction Format</h2>
+  <p>An x86_64 instruction is assembled from up to 6 distinct structural fields:</p>
+  
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Field</th><th scope="col">Size</th><th scope="col">Function & Security Relevance</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Prefixes</th><td>0-4 bytes</td><td>Lock prefix (<code>F0</code>), repeat prefix (<code>F3</code>), REX prefix for 64-bit operand sizes (<code>48</code>)</td></tr>
+        <tr><th scope="row">Opcode</th><td>1-3 bytes</td><td>Defines the operation (e.g. <code>89</code> for MOV, <code>01</code> for ADD, <code>CC</code> for INT3, <code>C3</code> for RET)</td></tr>
+        <tr><th scope="row">ModR/M</th><td>0-1 byte</td><td>Specifies addressing modes (direct register vs memory dereference)</td></tr>
+        <tr><th scope="row">SIB</th><td>0-1 byte</td><td>Scale-Index-Base byte for array indexing: <code>[base + index*scale]</code></td></tr>
+        <tr><th scope="row">Displacement</th><td>0-4 bytes</td><td>Memory address offset added to base</td></tr>
+        <tr><th scope="row">Immediate</th><td>0-4 (or 8) bytes</td><td>Constant hardcoded numerical operand (e.g., <code>0x1337</code>)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">psychology</span>
+  <div><b>Linear Sweep vs Recursive Traversal:</b> Simple tools like <code>objdump</code> use <b>Linear Sweep</b>, disassembling byte-by-byte in linear order. Malware authors easily defeat this by placing an unconditional jump followed immediately by random junk bytes: the linear sweep tries to decode the junk bytes, misaligns instruction boundaries, and turns subsequent code into garbage! Professional tools like Ghidra and IDA use <b>Recursive Traversal</b> to only follow valid branch targets.</div>
+</aside>
+
+<section class="card">
+  <h2>Common Opcode Quick-Reference for Reverse Engineers</h2>
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Opcode Byte</th><th scope="col">Instruction</th><th scope="col">Analyst Context</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>90</code></th><td><code>nop</code></td><td>No Operation (Used in NOP sleds for exploit alignment)</td></tr>
+        <tr><th scope="row"><code>CC</code></th><td><code>int3</code></td><td>Software breakpoint trap (Debuggers replace instructions with 0xCC)</td></tr>
+        <tr><th scope="row"><code>C3</code></th><td><code>ret</code></td><td>Return from procedure (Primary building block of ROP gadgets)</td></tr>
+        <tr><th scope="row"><code>E8 [rel32]</code></th><td><code>call</code></td><td>Function call with 32-bit relative target address</td></tr>
+        <tr><th scope="row"><code>E9 [rel32]</code></th><td><code>jmp</code></td><td>Unconditional jump with 32-bit relative target address</td></tr>
+        <tr><th scope="row"><code>EB [rel8]</code></th><td><code>jmp short</code></td><td>Short jump with 1-byte signed relative offset (-128 to +127)</td></tr>
+        <tr><th scope="row"><code>0F 05</code></th><td><code>syscall</code></td><td>x86_64 Linux system call trigger</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

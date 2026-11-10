@@ -1,0 +1,54 @@
+<section class="card">
+  <p>When you run a binary, the addresses you see inside your disassembler (like <code>0x401000</code> or <code>0x7ffff7de2000</code>) do not point directly to physical RAM chips. Instead, the CPU operating with the OS kernel provides every single process with an isolated illusion: <b>Virtual Memory</b>.</p>
+  <p>In 64-bit systems, a process has a vast virtual address space (typically 48-bit canonical addressing: 256 Terabytes), divided into user-space (lower half: <code>0x000000000000</code> to <code>0x7FFFFFFFFFFF</code>) and kernel-space (upper half: <code>0xFFFF800000000000</code> to <code>0xFFFFFFFFFFFFFFFF</code>).</p>
+</section>
+
+<section class="card">
+  <h2>Paging & Multi-Level Page Tables</h2>
+  <p>Physical memory is split into fixed-size chunks called <b>Frames</b> (typically 4 Kilobytes = 4,096 bytes). Virtual memory is organized into corresponding 4 KB <b>Pages</b>.</p>
+  <p>The CPU's Memory Management Unit (MMU) uses multi-level page tables to map each virtual page to a physical frame on demand. On x86_64, a 48-bit virtual address is split into 5 segments:</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Level</th><th scope="col">Bit Range</th><th scope="col">Width</th><th scope="col">Table Name</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">PML4</th><td>Bits [47:39]</td><td>9 bits</td><td>Page Map Level 4 (anchored by CPU register <code>CR3</code>)</td></tr>
+        <tr><th scope="row">PDPT</th><td>Bits [38:30]</td><td>9 bits</td><td>Page Directory Pointer Table</td></tr>
+        <tr><th scope="row">PD</th><td>Bits [29:21]</td><td>9 bits</td><td>Page Directory</td></tr>
+        <tr><th scope="row">PT</th><td>Bits [20:12]</td><td>9 bits</td><td>Page Table</td></tr>
+        <tr><th scope="row">Offset</th><td>Bits [11:0]</td><td>12 bits</td><td>Physical Page Offset (exact byte within the 4 KB page)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">shield</span>
+  <div><b>The Exploit Mitigation Anchor: The NX/XD Bit:</b> Bit 63 of a Page Table Entry is the <b>No-Execute (NX / XD) bit</b>. If this bit is set to <code>1</code> by the kernel, the MMU refuses to fetch instructions from that page. When the CPU attempts to jump to stack or heap memory with NX set, hardware triggers an instant Page Fault (<code>#PF</code>), crashing the process and killing classic shellcode injection!</div>
+</aside>
+
+<section class="card">
+  <h2>Address Space Layout of an Exploited Process</h2>
+  <p>From the lowest address to the highest userland address, an x86_64 binary's virtual memory layout looks like this:</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Segment</th><th scope="col">Default Permissions</th><th scope="col">Contents & Exploitation Target</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>.text</code></th><td><code>r-x</code> (Read + Execute)</td><td>Executable code, ROP gadgets, functions</td></tr>
+        <tr><th scope="row"><code>.rodata</code></th><td><code>r--</code> (Read-Only)</td><td>Constants, formatted string literals</td></tr>
+        <tr><th scope="row"><code>.data</code> / <code>.bss</code></th><td><code>rw-</code> (Read + Write)</td><td>Initialized / uninitialized global variables</td></tr>
+        <tr><th scope="row">Heap</th><td><code>rw-</code> (Read + Write, grows UP)</td><td>Dynamic allocations (malloc), Use-After-Free targets</td></tr>
+        <tr><th scope="row">Shared Libs (libc)</th><td><code>r-x</code> / <code>rw-</code> / <code>r--</code></td><td>System libraries (system, printf), libc gadgets</td></tr>
+        <tr><th scope="row">Stack</th><td><code>rw-</code> (Read + Write, grows DOWN)</td><td>Local variables, saved RBP, saved Return Address (RIP)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

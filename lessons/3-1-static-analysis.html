@@ -1,0 +1,43 @@
+<section class="card">
+  <p>Static analysis is the art of inspecting a binary’s code, structure, and embedded artifacts without running it. It is the first phase of any reverse engineering investigation because it carries zero risk of infecting your analysis machine with malicious code.</p>
+  <p>A disciplined static triage workflow follows an established hierarchy from high-level metadata down to specific function decompilation.</p>
+</section>
+
+<section class="card">
+  <h2>The Static Triage Checklist</h2>
+  <ol class="units">
+    <li><b>File Identification:</b> Confirm architecture (x86, x64, ARM), binary format (ELF, PE, Mach-O), endianness, and whether symbols were stripped (<code>file target.bin</code>).</li>
+    <li><b>Shannon Entropy Calculation:</b> Measure randomness from 0.0 to 8.0. Normal compiled code has an entropy of roughly 5.0 to 6.5. Entropy above <b>7.2</b> is a screaming red flag that the binary is packed (e.g., UPX), encrypted, or heavily obfuscated!</li>
+    <li><b>String Analysis:</b> Extract human-readable ASCII and 16-bit wide Unicode strings (<code>strings -a -e l target.bin</code>). Search for API names, C2 domains, hardcoded keys, registry keys, and error messages.</li>
+    <li><b>Imports & Exports Inspection:</b> Identify high-risk API imports. In Windows PE, <code>VirtualAlloc</code> with <code>PAGE_EXECUTE_READWRITE</code> often indicates shellcode injection or an unpacking stub.</li>
+    <li><b>Cross-References (Xrefs):</b> Jump from discovered strings or sensitive API calls directly to the basic blocks that reference them.</li>
+  </ol>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">auto_fix_high</span>
+  <div><b>Spotting Cryptographic Primitives:</b> Custom encryption algorithms are rare; adversaries and software authors almost always implement or link standard algorithms. You can identify cryptography instantly by scanning for famous hardcoded constants: <b>AES</b> uses the Rijndael S-box starting with <code>63 7C 77 7B</code>; <b>MD5</b> initializes registers with <code>0x67452301</code> and <code>0xEFCDAB89</code>; <b>SHA-256</b> uses initial hash constants derived from the fractional parts of square roots of the first 8 primes!</div>
+</aside>
+
+<section class="card">
+  <h2>Import Table Forensics</h2>
+  <p>Review the functions a binary requests from the OS to predict its behavior before opening a single disassembler view:</p>
+
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Imported API Call</th><th scope="col">Library</th><th scope="col">Typical Reverse Engineering Context</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>VirtualAlloc(..., 0x40)</code></th><td>kernel32.dll</td><td>Allocates memory with Read-Write-Execute (RWX) permissions for shellcode</td></tr>
+        <tr><th scope="row"><code>WriteProcessMemory</code></th><td>kernel32.dll</td><td>Process injection, hollowing, or hooking into remote targets</td></tr>
+        <tr><th scope="row"><code>ptrace(PTRACE_TRACEME)</code></th><td>libc.so</td><td>Linux anti-debugging check (fails if a debugger is already attached)</td></tr>
+        <tr><th scope="row"><code>WSAStartup / connect</code></th><td>ws2_32.dll</td><td>Network sockets, reverse shell initiation, beaconing to C2</td></tr>
+        <tr><th scope="row"><code>RegSetValueEx</code></th><td>advapi32.dll</td><td>Persistence mechanism in Windows Run keys</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

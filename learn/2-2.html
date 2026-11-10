@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.2 Opcodes, Encoding &amp; Disassembly Mechanics · Lazarus</title>
+<meta name="description" content="Master low-level machine execution, CPU internals, binary analysis, and reverse engineering from an offensive security perspective. 100% free and open source.">
+<link rel="canonical" href="https://lazarus-one.github.io/learn/2-2">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lazarus">
+<meta property="og:url" content="https://lazarus-one.github.io/learn/2-2">
+<meta property="og:title" content="Lazarus: Machine Execution & Reverse Engineering">
+<meta property="og:description" content="Master low-level machine execution, CPU internals, binary analysis, and reverse engineering from an offensive security perspective.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lazarus: Machine Execution & Reverse Engineering">
+<meta name="twitter:description" content="Master low-level machine execution, CPU internals, binary analysis, and reverse engineering from an offensive security perspective.">
+<meta name="theme-color" content="#f8fafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131314" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Google+Sans+Code:wght@400..600&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../app.css">
+<script>
+  // Apply saved theme immediately before paint to prevent flashing
+  try {
+    const t = localStorage.getItem("lazarus:theme");
+    if (t) document.documentElement.dataset.theme = t;
+  } catch {}
+</script>
+<script type="module" src="../app.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a href="./" class="brand" data-link>Lazarus</a>
+    <button class="icon-btn theme" type="button" aria-label="Switch theme" title="Switch theme"><span class="icon">dark_mode</span></button>
+    <a class="icon-btn" href="https://github.com/lazarus-one" target="_blank" rel="noopener" aria-label="GitHub Profile" title="GitHub Profile">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+    </a>
+  </div>
+</header>
+
+<main id="app" class="wrap" tabindex="-1" data-prerendered><div class="page">
+          <header class="page-header">
+            <div class="chips">
+              <a class="chip" href="../" data-link><span class="icon">arrow_back</span>Lazarus</a>
+              <span class="chip">Chapter 2: Binary Anatomy, Machine Code &amp; Disassembly</span>
+            </div>
+            <h1><span class="topic-num">2.2</span> Opcodes, Encoding &amp; Disassembly Mechanics</h1>
+          </header>
+          <article class="lesson"><section class="card">
+  <p>Compilers translate high-level source code into machine code—a sequence of binary bytes. A disassembler’s job is the inverse: taking bytes like <code>55 48 89 E5</code> and converting them into human-readable assembly instructions like <code>push rbp; mov rbp, rsp</code>.</p>
+  <p>Unlike RISC architectures (such as ARM or MIPS) where all instructions are a fixed 4 bytes (32 bits), x86_64 is a Complex Instruction Set Computer (CISC) with <b>variable-length instructions</b> ranging from <b>1 byte up to 15 bytes</b> in length!</p>
+</section>
+
+<section class="card">
+  <h2>The x86_64 Instruction Format</h2>
+  <p>An x86_64 instruction is assembled from up to 6 distinct structural fields:</p>
+  
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Field</th><th scope="col">Size</th><th scope="col">Function & Security Relevance</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Prefixes</th><td>0-4 bytes</td><td>Lock prefix (<code>F0</code>), repeat prefix (<code>F3</code>), REX prefix for 64-bit operand sizes (<code>48</code>)</td></tr>
+        <tr><th scope="row">Opcode</th><td>1-3 bytes</td><td>Defines the operation (e.g. <code>89</code> for MOV, <code>01</code> for ADD, <code>CC</code> for INT3, <code>C3</code> for RET)</td></tr>
+        <tr><th scope="row">ModR/M</th><td>0-1 byte</td><td>Specifies addressing modes (direct register vs memory dereference)</td></tr>
+        <tr><th scope="row">SIB</th><td>0-1 byte</td><td>Scale-Index-Base byte for array indexing: <code>[base + index*scale]</code></td></tr>
+        <tr><th scope="row">Displacement</th><td>0-4 bytes</td><td>Memory address offset added to base</td></tr>
+        <tr><th scope="row">Immediate</th><td>0-4 (or 8) bytes</td><td>Constant hardcoded numerical operand (e.g., <code>0x1337</code>)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">psychology</span>
+  <div><b>Linear Sweep vs Recursive Traversal:</b> Simple tools like <code>objdump</code> use <b>Linear Sweep</b>, disassembling byte-by-byte in linear order. Malware authors easily defeat this by placing an unconditional jump followed immediately by random junk bytes: the linear sweep tries to decode the junk bytes, misaligns instruction boundaries, and turns subsequent code into garbage! Professional tools like Ghidra and IDA use <b>Recursive Traversal</b> to only follow valid branch targets.</div>
+</aside>
+
+<section class="card">
+  <h2>Common Opcode Quick-Reference for Reverse Engineers</h2>
+  <div class="table-wrap">
+    <table class="ram places">
+      <thead>
+        <tr><th scope="col">Opcode Byte</th><th scope="col">Instruction</th><th scope="col">Analyst Context</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row"><code>90</code></th><td><code>nop</code></td><td>No Operation (Used in NOP sleds for exploit alignment)</td></tr>
+        <tr><th scope="row"><code>CC</code></th><td><code>int3</code></td><td>Software breakpoint trap (Debuggers replace instructions with 0xCC)</td></tr>
+        <tr><th scope="row"><code>C3</code></th><td><code>ret</code></td><td>Return from procedure (Primary building block of ROP gadgets)</td></tr>
+        <tr><th scope="row"><code>E8 [rel32]</code></th><td><code>call</code></td><td>Function call with 32-bit relative target address</td></tr>
+        <tr><th scope="row"><code>E9 [rel32]</code></th><td><code>jmp</code></td><td>Unconditional jump with 32-bit relative target address</td></tr>
+        <tr><th scope="row"><code>EB [rel8]</code></th><td><code>jmp short</code></td><td>Short jump with 1-byte signed relative offset (-128 to +127)</td></tr>
+        <tr><th scope="row"><code>0F 05</code></th><td><code>syscall</code></td><td>x86_64 Linux system call trigger</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+
+</article>
+          <nav class="lesson-navs" aria-label="Topics">
+            <a class="card lesson-nav prev" href="../learn/2-1.html" data-link>
+          <span class="meta">Previous Topic</span>
+          <span class="title">2.1 ELF &amp; PE Binary Formats Under the Microscope</span>
+        </a>
+            <a class="card lesson-nav next" href="../learn/2-3.html" data-link>
+          <span class="meta">Next Topic</span>
+          <span class="title">2.3 Control Flow Graphs &amp; Decompilation Logic</span>
+        </a>
+          </nav>
+        </div></main>
+
+<noscript id="lesson-copies">
+  <div class="wrap">
+    <h2>Curriculum Overview</h2>
+    <ul>
+      <li><a href="learn/1-1.html">1.1 CPU Execution Engine & Instruction Pipeline</a></li>
+      <li><a href="learn/1-2.html">1.2 Registers, Privilege Rings & CPU States</a></li>
+      <li><a href="learn/1-3.html">1.3 Virtual Memory, Paging & Address Translation</a></li>
+      <li><a href="learn/1-4.html">1.4 The Call Stack, Frames & ABI Calling Conventions</a></li>
+      <li><a href="learn/2-1.html">2.1 ELF & PE Binary Formats Under the Microscope</a></li>
+      <li><a href="learn/2-2.html">2.2 Opcodes, Encoding & Disassembly Mechanics</a></li>
+      <li><a href="learn/2-3.html">2.3 Control Flow Graphs & Decompilation Logic</a></li>
+      <li><a href="learn/3-1.html">3.1 Static Analysis: Triage, Strings & Cross-References</a></li>
+      <li><a href="learn/3-2.html">3.2 Dynamic Analysis & Debugger Internals</a></li>
+      <li><a href="learn/3-3.html">3.3 Anti-Reverse Engineering & Defense Evasion</a></li>
+      <li><a href="learn/4-1.html">4.1 Memory Corruption: Stack Buffer Overflows</a></li>
+      <li><a href="learn/4-2.html">4.2 Modern Exploit Mitigations & Defenses</a></li>
+      <li><a href="learn/4-3.html">4.3 Return-Oriented Programming (ROP) Foundations</a></li>
+    </ul>
+  </div>
+</noscript>
+
+<footer class="footer">
+  <div class="wrap">
+    <b>Lazarus</b> is free and open source. Built for offensive security researchers and reverse engineers.
+  </div>
+</footer>
+</body>
+</html>
+

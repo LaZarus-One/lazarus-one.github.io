@@ -1,0 +1,86 @@
+<section class="card">
+  <p>When hardware Data Execution Prevention (NX/DEP) is enabled, the CPU will instantly crash if you try to execute instructions stored on the stack or heap. In 2007, researchers revolutionized exploitation with a technique that requires <b>zero newly injected code</b>: <b>Return-Oriented Programming (ROP)</b>.</p>
+  <p>Instead of injecting new code, ROP scavenges existing snippets of code already present in the binary or linked libraries (like <code>libc</code>) that end in a <code>ret</code> instruction. These snippets are called <b>ROP Gadgets</b>.</p>
+</section>
+
+<section class="card">
+  <h2>The Geometry of a ROP Gadget</h2>
+  <p>A ROP gadget is a tiny sequence of 1 to 3 instructions ending in <code>ret</code> (opcode <code>0xC3</code>):</p>
+  <div class="asm-card">
+    <div class="asm-line"><span class="asm-bytes">5f c3</span><span class="asm-inst">pop rdi ; ret</span><span class="asm-comment">; Pops 8 bytes from stack into RDI, then jumps to next gadget!</span></div>
+  </div>
+  <p>In a ROP chain, the <b>stack acts as your program code</b>, and the Stack Pointer (<code>RSP</code>) acts as your instruction pointer! Every time a gadget finishes with <code>ret</code>, it consumes the next 8 bytes on the stack and jumps to it.</p>
+</section>
+
+<aside class="callout">
+  <span class="icon fill">terminal</span>
+  <div><b>Crafting an execve("/bin/sh", NULL, NULL) ROP Chain:</b> To pop a root shell on Linux x86_64 without executing a single byte of injected shellcode, an attacker chains gadgets to populate registers for syscall 59:
+    <div style="margin-top:8px;font-family:var(--font-code);font-size:13px;line-height:1.6">
+      1. <code>pop rdi; ret</code> &rarr; followed on stack by pointer to <code>"/bin/sh"</code><br>
+      2. <code>pop rsi; ret</code> &rarr; followed on stack by <code>0x0</code> (NULL)<br>
+      3. <code>pop rdx; ret</code> &rarr; followed on stack by <code>0x0</code> (NULL)<br>
+      4. <code>pop rax; ret</code> &rarr; followed on stack by <code>0x3b</code> (59 = sys_execve)<br>
+      5. <code>syscall</code> &rarr; Kernel spawns the interactive shell!
+    </div>
+  </div>
+</aside>
+
+<section class="card">
+  <h2>Finding Gadgets: ROPgadget and ropper</h2>
+  <p>Security analysts do not manually search through gigabytes of disassembled binaries looking for gadgets. We automate gadget discovery using tools like <code>ROPgadget</code> or <code>ropper</code>:</p>
+  <div class="cmd">
+<code>$ ROPgadget --binary /lib/x86_64-linux-gnu/libc.so.6 | grep ": pop rdi ; ret"
+0x000000000002a3e5 : pop rdi ; ret
+
+$ ROPgadget --binary /lib/x86_64-linux-gnu/libc.so.6 --string "/bin/sh"
+0x00000000001d8678 : /bin/sh</code>
+  </div>
+  <p>By pairing a known libc memory base with these gadget offsets, an attacker constructs a complete, Turing-complete program solely out of return addresses on the hijacked stack!</p>
+</section>
+
+<section class="card">
+  <h2>Interactive ROP Chain Execution Simulator</h2>
+  <p>Step through a live ROP chain to see how the CPU executes consecutive gadgets using only the hijacked stack:</p>
+
+  <div class="interactive-widget rop-widget">
+    <div class="widget-head">
+      <div class="widget-title"><span class="icon">terminal</span> ROP Execution Engine: execve("/bin/sh")</div>
+      <div class="badge-sec off" id="rop-shell-badge">SHELL: STANDBY</div>
+    </div>
+
+    <div class="pipeline-grid">
+      <div class="pipeline-stage active" id="rop-stage-rip">
+        <div class="stage-name">Instruction Pointer (RIP)</div>
+        <div class="stage-val" id="rop-val-rip">0x401800</div>
+      </div>
+      <div class="pipeline-stage" id="rop-stage-rsp">
+        <div class="stage-name">Stack Pointer (RSP)</div>
+        <div class="stage-val" id="rop-val-rsp">0x7fffffffe000</div>
+      </div>
+      <div class="pipeline-stage" id="rop-stage-regs">
+        <div class="stage-name">Target Registers</div>
+        <div class="stage-val" id="rop-val-regs">RDI=0 | RAX=0</div>
+      </div>
+    </div>
+
+    <div class="asm-card">
+      <div class="asm-line" id="rop-line-0"><span class="asm-addr">[Stack 0x00]:</span><span class="asm-bytes">0x401800</span><span class="asm-inst">pop rdi ; ret</span><span class="asm-comment">; Gadget 1: load 1st arg</span></div>
+      <div class="asm-line" id="rop-line-1"><span class="asm-addr">[Stack 0x08]:</span><span class="asm-bytes">0x402008</span><span class="asm-inst">"/bin/sh" string pointer</span><span class="asm-comment">; Data consumed by pop rdi</span></div>
+      <div class="asm-line" id="rop-line-2"><span class="asm-addr">[Stack 0x10]:</span><span class="asm-bytes">0x401850</span><span class="asm-inst">pop rax ; ret</span><span class="asm-comment">; Gadget 2: load syscall num</span></div>
+      <div class="asm-line" id="rop-line-3"><span class="asm-addr">[Stack 0x18]:</span><span class="asm-bytes">0x00003b</span><span class="asm-inst">59 (sys_execve)</span><span class="asm-comment">; Data consumed by pop rax</span></div>
+      <div class="asm-line" id="rop-line-4"><span class="asm-addr">[Stack 0x20]:</span><span class="asm-bytes">0x401890</span><span class="asm-inst">syscall</span><span class="asm-comment">; Kernel executes execve!</span></div>
+    </div>
+
+    <div class="bits-out">
+      <p id="rop-exp-msg">Click Step ROP Chain to execute the first return instruction.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-filled" id="btn-rop-step" type="button"><span class="icon">play_arrow</span>Step ROP Chain</button>
+      <button class="btn btn-tonal" id="btn-rop-reset" type="button"><span class="icon">restart_alt</span>Reset Chain</button>
+    </div>
+  </div>
+</section>
+
+<div class="challenge-slot"></div>
+

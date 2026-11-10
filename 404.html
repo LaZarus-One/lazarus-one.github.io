@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lazarus: Redirecting...</title>
+<script>
+  // Single Page App redirect for GitHub Pages
+  // Preserves deep route and query params
+  (function() {
+    var path = window.location.pathname;
+    // Extract route part after the repository or root
+    var segments = path.split('/').filter(Boolean);
+    // If the path contains 'learn', redirect to root with hash
+    var learnIdx = segments.indexOf('learn');
+    if (learnIdx !== -1) {
+      var repoBase = segments.slice(0, learnIdx).join('/');
+      var route = '/' + segments.slice(learnIdx).join('/');
+      var target = (repoBase ? '/' + repoBase : '') + '/#' + route;
+      window.location.replace(target);
+      return;
+    }
+  })();
+</script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="wrap" style="text-align:center;padding:80px 20px;">
+  <div class="card" style="max-width:540px;margin:0 auto;">
+    <span class="icon" style="font-size:48px;color:var(--primary);">terminal</span>
+    <h1 style="margin:16px 0 8px;">Routing to Module...</h1>
+    <p style="color:var(--on-surface-variant);margin-bottom:24px;">If you are not redirected automatically in 2 seconds, click below:</p>
+    <a href="./" class="btn btn-filled">Return to Lazarus Curriculum</a>
+  </div>
+</div>
+</body>
+</html>
+

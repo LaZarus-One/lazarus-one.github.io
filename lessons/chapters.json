@@ -1,0 +1,118 @@
+[
+  {
+    "number": 1,
+    "title": "Machine Execution & Hardware Architecture",
+    "topics": [
+      {
+        "id": "1-1",
+        "title": "CPU Execution Engine & The Instruction Pipeline",
+        "file": "1-1-cpu-pipeline.html",
+        "summary": "Von Neumann model, the Fetch-Decode-Execute cycle, clock cycles, and instruction pointer hijacking.",
+        "challenge": "fde-cycle"
+      },
+      {
+        "id": "1-2",
+        "title": "Registers, Privilege Rings & State Transitions",
+        "file": "1-2-registers.html",
+        "summary": "x86_64 general purpose registers, 32-bit zero extension quirk, Ring 0 vs Ring 3, and SYSCALLs.",
+        "challenge": "register-slicing"
+      },
+      {
+        "id": "1-3",
+        "title": "Virtual Memory, Paging & Address Translation",
+        "file": "1-3-virtual-memory.html",
+        "summary": "Virtual address spaces, page tables, page faults, and the hardware NX/XD permission bit.",
+        "challenge": "virtual-paging"
+      },
+      {
+        "id": "1-4",
+        "title": "The Call Stack, Frames & ABI Conventions",
+        "file": "1-4-call-stack.html",
+        "summary": "Stack growth, RSP/RBP management, CALL/RET internals, and System V vs Microsoft x64 calling conventions.",
+        "challenge": "stack-frames"
+      }
+    ]
+  },
+  {
+    "number": 2,
+    "title": "Binary Anatomy, Machine Code & Disassembly",
+    "topics": [
+      {
+        "id": "2-1",
+        "title": "ELF & PE Binary Formats Under the Microscope",
+        "file": "2-1-binary-anatomy.html",
+        "summary": "Magic headers, segments vs sections (.text, .rodata, .data, .bss), GOT/PLT dynamic resolution, and entry points.",
+        "challenge": "binary-headers"
+      },
+      {
+        "id": "2-2",
+        "title": "Opcodes, Encoding & Disassembly Mechanics",
+        "file": "2-2-disassembly.html",
+        "summary": "Machine instruction anatomy: prefixes, opcodes, ModR/M and SIB bytes, and linear sweep vs recursive disassembly.",
+        "challenge": "opcode-decode"
+      },
+      {
+        "id": "2-3",
+        "title": "Control Flow Graphs & Decompilation Logic",
+        "file": "2-3-control-flow.html",
+        "summary": "Basic blocks, branches, edge traversal, and reconstructing C conditionals, loops, and switch jump tables.",
+        "challenge": "cfg-logic"
+      }
+    ]
+  },
+  {
+    "number": 3,
+    "title": "Reverse Engineering Methodologies & Tooling",
+    "topics": [
+      {
+        "id": "3-1",
+        "title": "Static Analysis: Triage, Strings & Cross-References",
+        "file": "3-1-static-analysis.html",
+        "summary": "Triage methodology, entropy analysis for packing detection, string recovery, and crypto routine identification.",
+        "challenge": "static-triage"
+      },
+      {
+        "id": "3-2",
+        "title": "Dynamic Analysis & Debugger Internals",
+        "file": "3-2-dynamic-debugging.html",
+        "summary": "How debuggers manipulate targets: INT 3 (0xCC) software breakpoints, DR0-DR7 hardware debug registers, and the Trap Flag.",
+        "challenge": "debugger-mechanics"
+      },
+      {
+        "id": "3-3",
+        "title": "Anti-Reverse Engineering & Defense Evasion",
+        "file": "3-3-anti-analysis.html",
+        "summary": "TracerPid, PEB BeingDebugged, RDTSC timing checks, control flow flattening, and evasion detection.",
+        "challenge": "anti-debug"
+      }
+    ]
+  },
+  {
+    "number": 4,
+    "title": "Low-Level Vulnerabilities & Exploit Primitives",
+    "topics": [
+      {
+        "id": "4-1",
+        "title": "Memory Corruption: Stack Buffer Overflows",
+        "file": "4-1-stack-overflow.html",
+        "summary": "Unsafe memory copies, stack frame corruption, cyclic patterns, and hijacking RIP for code execution.",
+        "challenge": "stack-smashing"
+      },
+      {
+        "id": "4-2",
+        "title": "Modern Exploit Mitigations & Defenses",
+        "file": "4-2-mitigations.html",
+        "summary": "Stack canaries (__stack_chk_fail), NX/DEP, ASLR/PIE, and Partial vs Full RELRO mitigation matrix.",
+        "challenge": "mitigation-matrix"
+      },
+      {
+        "id": "4-3",
+        "title": "Return-Oriented Programming (ROP) Foundations",
+        "file": "4-3-rop-chains.html",
+        "summary": "Defeating W^X/DEP: gadgets ending in RET, pivoting RSP, and crafting an execve('/bin/sh') chain.",
+        "challenge": "rop-gadgets"
+      }
+    ]
+  }
+]
+
