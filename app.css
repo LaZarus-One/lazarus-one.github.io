@@ -1,4 +1,4 @@
-/* Lazarus - Material 3 Expressive.
+/* Lazarus: Material 3 Expressive.
    One layout rule for every page: a centered column, a centered page header,
    then cards with left-aligned content. Primary actions and the footer are centered. */
 
@@ -343,9 +343,9 @@ a.chip:hover { background: var(--surface-container); }
 /* End-of-topic challenge */
 .challenge h2 { margin-bottom: 6px; }
 .challenge .intro { color: var(--on-surface-variant); }
-.rounds { display: flex; gap: 6px; margin: 18px 0 4px; }
-.rounds span { width: 28px; height: 8px; border-radius: 4px; background: var(--surface-container-high); transition: background .3s var(--ease), width .4s var(--spring); }
-.rounds span.now { width: 44px; background: var(--primary-container); }
+.rounds { display: flex; gap: 8px; margin: 18px 0 8px; align-items: center; }
+.rounds span { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-container-high); transition: background .3s var(--ease), transform .3s var(--spring); }
+.rounds span.now { width: 10px; height: 10px; border-radius: 50%; background: var(--primary-container); transform: scale(1.3); }
 .rounds span.done { background: var(--primary); }
 .question { margin: 14px 0; }
 .byte { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; max-width: 520px; animation: pop .45s var(--spring); }
