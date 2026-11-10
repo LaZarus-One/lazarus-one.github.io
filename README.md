@@ -40,7 +40,7 @@
 
 ### Chapter 3: Reverse Engineering Methodologies & Tooling
 - **3.1 Static Analysis: Triage, Strings & Cross-References**: Triage workflow, Shannon entropy calculation, string forensics, and spotting cryptographic primitives.
-- **3.2 Dynamic Analysis & Debugger Internals**: The inner workings of software breakpoints (`0xCC` / `INT 3`), hardware debug registers (`DR0`–`DR7`), and the Trap Flag (`TF`).
+- **3.2 Dynamic Analysis & Debugger Internals**: The inner workings of software breakpoints (`0xCC` / `INT 3`), hardware debug registers (`DR0`-`DR7`), and the Trap Flag (`TF`).
 - **3.3 Anti-Reverse Engineering & Defense Evasion**: `PEB.BeingDebugged`, `TracerPid`, `RDTSC` timing checks, and code obfuscation patterns.
 
 ### Chapter 4: Low-Level Vulnerabilities & Exploit Primitives
